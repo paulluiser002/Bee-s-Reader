@@ -1,0 +1,63 @@
+{
+  "checkedAt": "2026-10-24T12:52:53.445Z",
+  "note": "Live network responses, not fixtures. One metadata probe per supplementary source; only first-page images in both qualities, discarded after validation. No bulk collection.",
+  "results": [
+    {
+      "provider": "MangaDex",
+      "ok": true,
+      "detail": {
+        "id": "0a580438-bc72-4503-940b-12a5da881b56",
+        "title": "Kimi wa Yotsuba no Clover",
+        "totalSearchResults": 21,
+        "readableChaptersInFirstPage": 5,
+        "chapterId": "93ea0d72-169d-4418-b48d-95091972a871"
+      }
+    },
+    {
+      "provider": "MangaDex images",
+      "ok": true,
+      "detail": {
+        "chapterId": "93ea0d72-169d-4418-b48d-95091972a871",
+        "pageCount": 52,
+        "images": [
+          {
+            "quality": "data-saver",
+            "contentType": "image/jpeg",
+            "bytes": 98969
+          },
+          {
+            "quality": "original",
+            "contentType": "image/png",
+            "bytes": 283217
+          }
+        ]
+      }
+    },
+    {
+      "provider": "AniList",
+      "ok": true,
+      "detail": {
+        "provider": "AniList",
+        "title": "Berserk",
+        "score": "92/100",
+        "genres": [
+          "Action",
+          "Adventure",
+          "Drama",
+          "Fantasy",
+          "Horror",
+          "Psychological"
+        ],
+        "status": "RELEASING",
+        "chapters": null,
+        "volumes": null,
+        "url": "https://anilist.co/manga/30002"
+      }
+    },
+    {
+      "provider": "Jikan",
+      "ok": false,
+      "detail": "Jikan could not be reached. Check your connection and try again."
+    }
+  ]
+}
