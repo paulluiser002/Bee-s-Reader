@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { fixtures, chapterId, mangaId } from './fixtures';
+import { readProfile, fixtures, chapterId, mangaId } from './fixtures';
 test('progress reaches history immediately through client navigation', async ({ page }) => {
   await fixtures(page);
   await page.goto(`/read/${chapterId}`);
@@ -21,7 +21,7 @@ test('settings hydrates without changing its initial theme controls', async ({ p
 });
 
 test('clamps progress when a chapter has fewer pages than the saved history', async ({ page }) => {
-  const { state } = await fixtures(page, {
+  await fixtures(page, {
     history: [
       {
         mangaId,
@@ -35,5 +35,5 @@ test('clamps progress when a chapter has fewer pages than the saved history', as
   });
   await page.goto(`/read/${chapterId}`);
   await expect(page.getByAltText('Page 3')).toBeVisible();
-  await expect.poll(() => state.history[0].pageIndex).toBe(2);
+  await expect.poll(async () => (await readProfile(page)).history[0].pageIndex).toBe(2);
 });

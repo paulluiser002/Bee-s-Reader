@@ -18,11 +18,11 @@ vi.mock('@/lib/providers/mangadex', () => ({
 }));
 vi.mock('@/lib/providers/media', async (original) => ({
   ...(await original<typeof import('@/lib/providers/media')>()),
-  fetchImage: async (url: string, _report: boolean, defer?: (job: () => Promise<void>) => void) => {
+  streamImage: async (url: string, _report: boolean, defer?: (job: () => Promise<void>) => void) => {
     m.urls.push(url);
     if (defer) defer(m.report);
     else await m.report();
-    return { buffer: Buffer.from([1, 2, 3]), type: 'image/jpeg' };
+    return {body:new ReadableStream({start(c){c.enqueue(new Uint8Array([1,2,3]));c.close();}}),type:'image/jpeg'};
   },
 }));
 import { GET } from '@/app/api/reader/[id]/images/[page]/route';

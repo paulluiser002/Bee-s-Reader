@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="theme-color" content="#111318" />
+    <title>You’re offline · Bee’s Reader</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      body {
+        margin: 0;
+        padding: 12vh 24px;
+        background: #fffdf7;
+        color: #30291e;
+        font:
+          16px/1.6 system-ui,
+          sans-serif;
+      }
+      main {
+        max-width: 36rem;
+        margin: auto;
+      }
+      h1 {
+        line-height: 1.2;
+        font-size: 32px;
+      }
+      a {
+        display: inline-block;
+        padding: 12px 20px;
+        background: #f6d477;
+        color: #30220a;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      a:focus-visible {
+        outline: 3px solid #8c5e0e;
+        outline-offset: 4px;
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #111318;
+          color: #f7f4ed;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img src="/icons/icon-192.png" width="64" height="64" alt="" />
+      <h1>Your nook is still here.</h1>
+      <p>
+        You’re offline. Your library, preferences, and saved reading positions remain in this
+        browser. Reconnect to load stories and chapter pages.
+      </p>
+      <p>Bee’s Reader doesn’t download chapters for offline reading.</p>
+      <a href="/">Try again</a>
+    </main>
+  </body>
+</html>

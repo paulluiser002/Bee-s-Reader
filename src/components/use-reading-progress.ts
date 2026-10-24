@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import type { Progress } from '@/lib/schemas';
 import { positionInPage } from '@/lib/reader';
-import { clientJSON } from '@/lib/client';
 import { useLocal } from './local-provider';
 type Position = {
   mangaId: string;
@@ -28,7 +27,7 @@ export function useReadingProgress({
   loaded: Set<number>;
   resume?: Progress;
 }) {
-  const { recordProgress } = useLocal();
+  const { saveProgress } = useLocal();
   const [initial] = useState(() =>
     resume && !resume.completed
       ? { ...resume, pageIndex: Math.min(resume.pageIndex, pageCount - 1) }
@@ -46,7 +45,6 @@ export function useReadingProgress({
   const lastWrite = useRef('');
   const timestamp = useRef(0);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pending = useRef<Promise<unknown>>(Promise.resolve());
   const snapshot = useRef<Position | null>(null);
   const allLoaded = Array.from({ length: pageCount }, (_, i) => i).every(
     (i) => i < (initial?.pageIndex || 0) || loaded.has(i),
@@ -106,7 +104,8 @@ export function useReadingProgress({
     };
   }, [chapterId, mangaId, pageCount, stream]);
   const save = useCallback(
-    async (keepalive = false, measure = true) => {
+    async (_keepalive = false, measure = true) => {
+      void _keepalive;
       if (measure) capture();
       const position = snapshot.current;
       if (!position) return;
@@ -114,30 +113,15 @@ export function useReadingProgress({
       if (lastWrite.current === signature) return;
       const recordedAt = Math.max(Date.now(), timestamp.current + 1);
       timestamp.current = recordedAt;
-      const serialized = JSON.stringify({ ...position, recordedAt });
-      const send = async () => {
-        try {
-          const saved = await clientJSON<Progress>('/api/local/progress', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: serialized,
-            keepalive,
-          });
-          recordProgress(saved);
-          lastWrite.current = signature;
-          setSaveError('');
-        } catch (e) {
-          setSaveError(
-            e instanceof Error ? e.message : 'Your reading position could not be saved.',
-          );
-        }
-      };
-      // Lifecycle requests must dispatch now; the database rejects older recordedAt values.
-      if (keepalive) return send();
-      pending.current = pending.current.then(send, send);
-      await pending.current;
+      try {
+        saveProgress({ ...position, recordedAt });
+        lastWrite.current = signature;
+        setSaveError('');
+      } catch (e) {
+        setSaveError(e instanceof Error ? e.message : 'Your reading position could not be saved.');
+      }
     },
-    [capture, recordProgress],
+    [capture, saveProgress],
   );
   useEffect(() => {
     const node = end.current;
@@ -194,7 +178,9 @@ export function useReadingProgress({
     };
   }, [capture, save]);
   useEffect(() => {
-    if (restored) void save();
+    if (!restored) return;
+    const timer = setTimeout(() => void save(), 0);
+    return () => clearTimeout(timer);
   }, [restored, atEnd, allLoaded, intentional, save]);
   return {
     page,

@@ -53,7 +53,7 @@ export const progressSchema = z.strictObject({
   pageIndex: z.number().int().min(0).max(1999),
   scrollFraction: z.number().min(0).max(1),
   completed: z.boolean(),
-  recordedAt: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).optional(),
+  recordedAt: z.number().int().min(0).max(253_402_300_799_999).optional(),
 });
 export type Progress = z.infer<typeof progressSchema> & { updatedAt: string };
 export type Bookmark = { mangaId: string; createdAt: string; updatedAt: string };

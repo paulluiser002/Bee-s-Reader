@@ -35,52 +35,20 @@ export async function fixtures(
   page: Page,
   options: { failedPage?: number; history?: LocalState['history'] } = {},
 ) {
-  const state: LocalState = {
-    preferences: {
-      theme: 'system',
-      language: 'en',
-      mode: 'long',
-      pageWidthPercent: 100,
-      quality: 'data-saver',
-      autoNext: true,
-    },
-    bookmarks: [],
-    history: options.history || [],
-  };
+  await page.addInitScript((history) => {
+    if (!localStorage.getItem('bees-reader:test-seeded')) {
+      for (const p of history)
+        localStorage.setItem('bees-reader:v2:progress:' + p.chapterId, JSON.stringify(p));
+      localStorage.setItem('bees-reader:test-seeded', 'true');
+    }
+  }, options.history || []);
   const imageRequests: string[] = [];
   let failImage = options.failedPage;
   await page.route('**/api/**', async (route) => {
     const request = route.request();
     const url = new URL(request.url());
     const path = url.pathname;
-    const body = request.postDataJSON();
     const json = (value: unknown, status = 200) => route.fulfill({ status, json: value });
-    if (path === '/api/local') return json(state);
-    if (path === '/api/local/bookmarks') {
-      state.bookmarks = body.saved
-        ? [
-            {
-              mangaId: body.mangaId,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            },
-          ]
-        : [];
-      return json({ saved: body.saved });
-    }
-    if (path === '/api/local/preferences') {
-      state.preferences = body;
-      return json(body);
-    }
-    if (path === '/api/local/history') {
-      state.history = [];
-      return json({ cleared: true });
-    }
-    if (path === '/api/local/progress') {
-      const progress = { ...body, updatedAt: new Date().toISOString() };
-      state.history = [progress, ...state.history.filter((p) => p.chapterId !== body.chapterId)];
-      return json(progress);
-    }
     if (path === '/api/manga') {
       const title = url.searchParams.get('title');
       if (title === 'error')
@@ -140,5 +108,31 @@ export async function fixtures(
     if (path === `/api/manga/${mangaId}`) return json(manga);
     return json({ error: 'Unknown test route' }, 404);
   });
-  return { state, imageRequests };
+  return { imageRequests };
+}
+
+export async function readProfile(page: Page): Promise<LocalState> {
+  return page.evaluate(() => {
+    const prefix = 'bees-reader:v2:';
+    const bookmarks = [],
+      history = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)!;
+      if (key.startsWith(prefix + 'bookmark:'))
+        bookmarks.push(JSON.parse(localStorage.getItem(key)!));
+      if (key.startsWith(prefix + 'progress:'))
+        history.push(JSON.parse(localStorage.getItem(key)!));
+    }
+    const merged = new Map();
+    for (const row of history) {
+      const old = merged.get(row.chapterId);
+      const newest = !old || row.updatedAt > old.updatedAt ? row : old;
+      merged.set(row.chapterId, { ...newest, completed: row.completed || !!old?.completed });
+    }
+    return {
+      bookmarks,
+      history: [...merged.values()].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
+      preferences: JSON.parse(localStorage.getItem(prefix + 'preferences') || 'null'),
+    };
+  });
 }

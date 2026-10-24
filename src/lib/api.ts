@@ -32,25 +32,3 @@ export async function api<T>(work: () => Promise<T>) {
     );
   }
 }
-export function requireSameOrigin(request: Request) {
-  const origin = request.headers.get('origin');
-  if (
-    !origin ||
-    origin !== new URL(request.url).origin ||
-    request.headers.get('sec-fetch-site') === 'cross-site'
-  )
-    throw new ProviderError('A same-origin request is required.', 403);
-  if (!request.headers.get('content-type')?.startsWith('application/json'))
-    throw new ProviderError('JSON content is required.', 415);
-}
-export async function jsonBody(request: Request) {
-  if (Number(request.headers.get('content-length')) > 8192)
-    throw new ProviderError('Request too large.', 413);
-  const text = await request.text();
-  if (text.length > 8192) throw new ProviderError('Request too large.', 413);
-  try {
-    return JSON.parse(text);
-  } catch {
-    throw new ProviderError('Invalid JSON.', 400);
-  }
-}

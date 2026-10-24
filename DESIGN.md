@@ -9,3 +9,5 @@ Type: self-hosted Nunito Sans, rounded but compact, with a heavier editorial tit
 No marketing metrics, invented recommendations, or sample catalog in production. Empty personal shelves invite browsing. Source links accompany real metadata.
 
 The light primary shade is darkened from the suggested #B27B18 for WCAG AA small-link contrast on paper surfaces; honey fills keep their warm yellow appearance.
+
+Settings adds browser-profile export/import and installation in the same simple section layout. Fullscreen controls use Lucide maximize/minimize icons with a floating exit control and mobile safe-area spacing. Unsupported browsers get a clearly labeled focus mode. The PWA icon extends the existing honey hexagon/book brand; the offline help screen uses warm paper/charcoal surfaces. Functional labels have an 11px minimum.

@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { defaults, preferencesSchema, progressSchema } from '@/lib/schemas';
-import { requireSameOrigin } from '@/lib/api';
 import { latestPerManga, mergeProgress } from '@/lib/progress';
 const id = '00000000-0000-4000-8000-000000000001';
 describe('local persistence rules', () => {
@@ -30,22 +29,5 @@ describe('local persistence rules', () => {
     ];
     expect(latestPerManga(rows).map((p) => p.chapterId)).toEqual(['new', 'other']);
     expect(rows).toHaveLength(3);
-  });
-  it('rejects cross-site and missing-origin writes', () => {
-    expect(() =>
-      requireSameOrigin(
-        new Request('http://localhost:3000/api/local', {
-          headers: { origin: 'https://evil.example', 'Content-Type': 'application/json' },
-        }),
-      ),
-    ).toThrow();
-    expect(() => requireSameOrigin(new Request('http://localhost:3000/api/local'))).toThrow();
-    expect(() =>
-      requireSameOrigin(
-        new Request('http://localhost:3000/api/local', {
-          headers: { origin: 'http://localhost:3000', 'Content-Type': 'application/json' },
-        }),
-      ),
-    ).not.toThrow();
   });
 });

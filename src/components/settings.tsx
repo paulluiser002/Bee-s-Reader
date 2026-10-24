@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { Sun, Moon, Monitor, ArrowUpRight, Check, Trash2 } from 'lucide-react';
 import { useLocal } from './local-provider';
 import { Button } from './ui/button';
-import { clientJSON } from '@/lib/client';
 import type { Preferences } from '@/lib/schemas';
+import { ProfileTools } from './profile-tools';
+import { InstallApp } from './pwa';
 export function Settings() {
   const local = useLocal();
   const { theme, setTheme } = useTheme();
@@ -159,12 +160,14 @@ export function Settings() {
             </select>
           </label>
         </section>
+        <InstallApp />
+        <ProfileTools />
         <section className="settings-section">
           <h2>Your data</h2>
           <div className="setting-row">
             <div>
               <h3>Reading history</h3>
-              <p>Stored only in this app’s local database.</p>
+              <p>Stored only in this browser profile.</p>
             </div>
             <Button variant="outline" onClick={() => setConfirm(true)}>
               <Trash2 size={16} />
@@ -182,12 +185,7 @@ export function Settings() {
                 <Button
                   onClick={async () => {
                     try {
-                      await clientJSON('/api/local/history', {
-                        method: 'DELETE',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ confirm: true }),
-                      });
-                      local.reload();
+                      local.clearHistory();
                       setConfirm(false);
                       setMessage('Reading history cleared.');
                     } catch (e) {

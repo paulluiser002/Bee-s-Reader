@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { fixtures, mangaId, chapterId, nextId } from './fixtures';
+import { readProfile, fixtures, mangaId, chapterId, nextId } from './fixtures';
 for (const width of [320, 375, 390, 430, 768, 1280])
   test(`all screens fit at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 });
@@ -99,12 +99,12 @@ test('reader uses ordered data-saver pages without distortion or gaps and switch
   await expect.poll(() => imageRequests.some((url) => url.includes('quality=original'))).toBe(true);
 });
 test('failed images require retry and cannot auto-complete a chapter', async ({ page }) => {
-  const { state } = await fixtures(page, { failedPage: 1 });
+  await fixtures(page, { failedPage: 1 });
   await page.goto(`/read/${chapterId}`);
   await expect(page.getByText('Page 2 couldn’t load.')).toBeVisible();
   await page.mouse.wheel(0, 4000);
-  await expect.poll(() => state.history.length).toBeGreaterThan(0);
-  expect(state.history.some((p) => p.completed)).toBe(false);
+  await expect.poll(async () => (await readProfile(page)).history.length).toBeGreaterThan(0);
+  expect((await readProfile(page)).history.some((p) => p.completed)).toBe(false);
   expect(page.url()).toContain(chapterId);
   await page.getByRole('button', { name: 'Retry page', exact: true }).click();
   await expect(page.getByAltText('Page 2')).toBeVisible();
@@ -112,7 +112,7 @@ test('failed images require retry and cannot auto-complete a chapter', async ({ 
 test('auto-next waits for intentional scrolling, supports cancel and saves completion', async ({
   page,
 }) => {
-  const { state } = await fixtures(page);
+  await fixtures(page);
   await page.goto(`/read/${chapterId}`);
   await expect(page.getByAltText('Page 1')).toBeVisible();
   expect(page.url()).toContain(chapterId);
@@ -124,7 +124,9 @@ test('auto-next waits for intentional scrolling, supports cancel and saves compl
   await expect(page.getByRole('button', { name: 'Cancel auto-next' })).toBeVisible();
   await page.getByRole('button', { name: 'Cancel auto-next' }).click();
   await expect(page.getByRole('button', { name: 'Cancel auto-next' })).toBeHidden();
-  await expect.poll(() => state.history.some((p) => p.completed)).toBe(true);
+  await expect
+    .poll(async () => (await readProfile(page)).history.some((p) => p.completed))
+    .toBe(true);
   expect(page.url()).toContain(chapterId);
 });
 test('auto-next advances to the confirmed next chapter once', async ({ page }) => {
@@ -140,7 +142,7 @@ test('auto-next advances to the confirmed next chapter once', async ({ page }) =
   await expect(page.getByRole('heading', { name: 'Chapter 2', exact: true })).toBeVisible();
 });
 test('restores the saved page after reload', async ({ page }) => {
-  const { state } = await fixtures(page, {
+  await fixtures(page, {
     history: [
       {
         mangaId,
@@ -155,13 +157,13 @@ test('restores the saved page after reload', async ({ page }) => {
   await page.goto(`/read/${chapterId}`);
   await expect(page.getByAltText('Page 2')).toBeVisible();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(500);
-  await expect.poll(() => state.history[0]?.pageIndex).toBe(1);
+  await expect.poll(async () => (await readProfile(page)).history[0]?.pageIndex).toBe(1);
   await page.reload();
   await expect(page.getByAltText('Page 2')).toBeVisible();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(500);
 });
 test('clearing history requires confirmation and keeps bookmarks', async ({ page }) => {
-  const { state } = await fixtures(page);
+  await fixtures(page);
   await page.goto(`/manga/${mangaId}`);
   await page.getByRole('button', { name: 'Save to library' }).click();
   await page.goto('/settings');
@@ -171,7 +173,7 @@ test('clearing history requires confirmation and keeps bookmarks', async ({ page
   await expect(page.getByRole('group', { name: 'Clear reading history' })).toBeHidden();
   await page.getByRole('button', { name: 'Clear', exact: true }).click();
   await page.getByRole('button', { name: 'Clear history', exact: true }).click();
-  expect(state.bookmarks).toHaveLength(1);
+  expect((await readProfile(page)).bookmarks).toHaveLength(1);
 });
 test('image route rejects arbitrary URLs before contacting upstream', async ({ request }) => {
   const response = await request.get(`/api/reader/${chapterId}/images/0?url=http://127.0.0.1`);

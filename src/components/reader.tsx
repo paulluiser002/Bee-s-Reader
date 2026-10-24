@@ -7,6 +7,7 @@ import { useResource } from '@/lib/client';
 import { canAutoAdvance, type ReaderData } from '@/lib/reader';
 import { useLocal } from './local-provider';
 import { BookmarkButton } from './bookmark-button';
+import { FullscreenControl } from './fullscreen-control';
 import { useReadingProgress } from './use-reading-progress';
 import { Failure } from './catalog';
 import { Button } from './ui/button';
@@ -22,12 +23,6 @@ export function Reader({ id }: { id: string }) {
         </Link>
       </div>
     );
-  if (local.error)
-    return (
-      <div className="reader-message">
-        <Failure message={local.error} retry={local.reload} />
-      </div>
-    );
   if (!data.data || !local.ready)
     return (
       <div className="reader-message" role="status">
@@ -35,7 +30,16 @@ export function Reader({ id }: { id: string }) {
         <p>Opening your chapter…</p>
       </div>
     );
-  return <ChapterReader key={id} data={data.data} />;
+  return (
+    <>
+      {local.error && (
+        <div className="reader-storage-warning" role="alert">
+          {local.error}
+        </div>
+      )}
+      <ChapterReader key={id} data={data.data} />
+    </>
+  );
 }
 function ChapterReader({ data }: { data: ReaderData }) {
   const { chapter, manga, pageCount, sequence, previous, next } = data;
@@ -180,6 +184,12 @@ function ChapterReader({ data }: { data: ReaderData }) {
             {chapter.title ? ` · ${chapter.title}` : ''}
           </span>
         </div>
+        <FullscreenControl
+          onFocusChange={(focused) => {
+            setChrome(!focused);
+            setAppearance(false);
+          }}
+        />
         <BookmarkButton id={manga.id} compact />
         <Button
           variant="ghost"

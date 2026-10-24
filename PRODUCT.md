@@ -8,11 +8,11 @@ web
 
 ## Stack
 
-Next.js App Router, TypeScript, Tailwind, shadcn/ui, Prisma/SQLite; specified in docs/SPECIFICATION.md.
+Next.js App Router, TypeScript, Tailwind, shadcn/ui, browser-local profiles, Vercel Node functions; original specification in docs/SPECIFICATION.md and updated architecture in docs/superpowers/plans/2026-10-24-vercel.md.
 
 ## Users
 
-A single local user reading manga, manhwa and manhua primarily on a 320–430px phone viewport.
+Visitors with separate browser profiles reading manga, manhwa and manhua primarily on a 320–430px phone viewport.
 
 ## Product Purpose
 
@@ -20,7 +20,7 @@ Private, ad-free browsing and continuous vertical reading, with local bookmarks 
 
 ## Capabilities and Constraints
 
-MangaDex supplies permitted chapters and images; AniList and Jikan provide optional supplementary metadata. No bulk image storage, paid access, fabricated availability, public hosting, or frontend secrets. Localhost-only scripts. Honor provider removals and attribution.
+MangaDex supplies permitted chapters and images; AniList and Jikan provide optional supplementary metadata. No bulk image storage, paid access, fabricated availability, frontend secrets, or server personal-data storage. Vercel hosting, no login, per-browser/origin local storage, export/import, fullscreen and installable PWA with offline help only. Honor provider removals and attribution.
 
 ## Brand Commitments
 

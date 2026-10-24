@@ -157,7 +157,7 @@ input::placeholder {
 }
 .brand small {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.03em;
   font-weight: 500;
   color: var(--muted-foreground);
@@ -622,7 +622,7 @@ input[type='search'] {
   background: var(--background);
   color: var(--foreground);
   border-radius: 5px;
-  font-size: 10px;
+  font-size: 11px;
   padding: 2px 7px;
   font-weight: 800;
 }
@@ -829,7 +829,7 @@ input[type='search'] {
 }
 .tag {
   padding: 4px 8px;
-  font-size: 10px;
+  font-size: 11px;
   border-radius: 6px;
   background: var(--card);
   color: var(--muted-foreground);
@@ -1429,4 +1429,51 @@ input[type='search'] {
   text-decoration: underline;
   font-weight: 800;
   padding: 8px;
+}
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0 12px;
+}
+.reader-storage-warning {
+  padding: 12px 20px;
+  background: var(--card);
+  color: var(--foreground);
+  font-size: 12px;
+  position: relative;
+  z-index: 50;
+}
+.fullscreen-controls {
+  position: fixed;
+  right: 12px;
+  bottom: calc(82px + env(safe-area-inset-bottom));
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  max-width: calc(100vw - 24px);
+}
+.fullscreen-controls > .icon-button {
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+.fullscreen-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 390px;
+  padding: 12px 14px;
+  background: var(--card);
+  color: var(--foreground);
+  border-radius: 12px;
+  font-size: 12px;
+  box-shadow: var(--shadow);
+}
+html:fullscreen {
+  background: var(--background);
+}
+html:fullscreen .reader {
+  min-height: 100dvh;
 }

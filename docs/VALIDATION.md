@@ -2,6 +2,35 @@
 
 Date: October 24, 2026 (Asia/Manila).
 
+## Vercel transition — current release
+
+The user approved browser-local profiles without login or a server database. This supersedes the original SQLite/local-only architecture. The previous database file is ignored and untouched; it contained no bookmarks/history at migration.
+
+| Check                                | Result                                                                                                                                                 |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm test`                           | 55 passed in 12 suites                                                                                                                                 |
+| `npm run test:e2e`                   | 32 passed, including 8 light/dark accessibility checks and all routes at 320–1280px                                                                    |
+| `npm run test:pwa`                   | Production build and PWA test passed: manifest/icons, offline fallback/icon, cache boundary, persisted profile                                         |
+| Typecheck / ESLint / diff whitespace | Passed                                                                                                                                                 |
+| `npm audit --omit=dev`               | 0 vulnerabilities                                                                                                                                      |
+| Real MangaDex                        | Search/details/feed and first image in both data-saver (98,969 bytes JPEG) and Original (283,217 bytes PNG) passed                                     |
+| Production API smoke                 | Real 52-page chapter metadata and first data-saver image returned 200 through `next start`; image is no-store; former personal API returns 404         |
+| Real AniList                         | Public metadata probe passed; application integration stays permission-gated                                                                           |
+| Real Jikan                           | Connection timed out; optional adapter does not block primary reading                                                                                  |
+| Independent review                   | Same-chapter concurrent writes, timing metrics and history-backup import findings fixed and regression tested; no remaining blockers in reviewed scope |
+
+Browser tests use fixture provider responses/artwork but **real browser storage**, checking isolated browser contexts, tab reopening, multi-tab bookmark updates, backup transfer including history/completion/theme, fullscreen and focus-mode fallback. Unit tests reproduce interleaved same-chapter writes and merge collision-preserving writer records; successful completion remains sticky. Streaming tests cover a 6MB page with backpressure, size limits, cancellation, cleanup and full elapsed-time reports. Shared-cache tests cover independent function clients, cooldowns, expiry without renewal on reads, invalidation and fallback on cache outage. No deterministic test is represented as a successful live upstream response. Browser/PWA artifact directories are isolated after parallel runs exposed a trace-file cleanup collision; the complete browser suite and PWA suite passed afterward.
+
+Live requests were rerun after the deployment changes. An initial MangaDex timeout cleared on the diagnostic follow-up; the final probes succeeded. Jikan remains unreachable from this machine and MangaDex@Home health report delivery can time out (logged without delaying pages). Records: `live-integration-results.json` and `vercel-production-smoke.json`.
+
+Mobile light/dark Settings and fullscreen were visually inspected; captures are `screenshots/vercel-*.png` and contain explicit fixture artwork where applicable. The rendered design detector caught existing 10px labels, raised to 11px; the final rendered Settings scan reported no findings. Chapter binaries are neither persisted nor bulk downloaded. PWA cache contains only the static offline page and three icon files, never provider/API responses or reading images.
+
+**Not yet deployed to Vercel.** Actual Vercel network access, Runtime Cache availability, streaming transport and service-worker update lifecycle need a deployed-origin smoke test. Runtime Cache is ephemeral and region-scoped; shared cooldowns plus per-process pacing do not constitute an atomic distributed limiter. Public traffic may need stronger rate control. Profiles are per browser profile/origin; no automatic cross-device sync, shared-browser separation or account recovery. These limits and deployment steps are in README.
+
+## Initial local-only release — historical record
+
+The following entries describe the original implementation before the Vercel transition; SQLite and localhost-only restrictions no longer apply.
+
 ## Phase progression
 
 - Phase 0: empty workspace initialized with Next.js/TypeScript/Tailwind, Radix/shadcn button configuration, semantic themes, mobile shell, Prisma/SQLite migrations, formatter/linter and test tooling. Shell test passed; Prisma schema and migration verified.
@@ -32,7 +61,7 @@ The live catalog screenshots contain actual MangaDex data. Test-only SVG artwork
 | `npm run test:e2e`     | 27 passed; all eight routes checked at 320, 375, 390, 430, 768, 1280px                                        |
 | `npm run lint`         | Passed without warnings                                                                                       |
 | `npm run typecheck`    | Passed                                                                                                        |
-| `npm run build`        | Passed; all application/API routes compiled                                                              |
+| `npm run build`        | Passed; all application/API routes compiled                                                                   |
 | `npm audit --omit=dev` | 0 vulnerabilities                                                                                             |
 | Live MangaDex          | Catalog/details/feed and first page in data-saver (98,969 bytes JPEG) and Original (283,217 bytes PNG) passed |
 | Live AniList           | Public metadata contract passed; app remains disabled by policy default                                       |

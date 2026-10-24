@@ -241,7 +241,7 @@ export async function getAllChapters(id: string, lang: string) {
 export async function getAtHome(id: string, refresh = false) {
   uuid.parse(id);
   const url = `${MD}/at-home/server/${id}`;
-  if (refresh) homeClient.invalidate(url);
+  if (refresh) await homeClient.invalidate(url);
   const result = await homeClient.json(url, atHomeSchema, { ttl: 60000 });
   if (
     !result.chapter.dataSaver.length ||
