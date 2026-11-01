@@ -1,0 +1,83 @@
+{
+  "checkedAt": "2026-11-01T10:42:16.024Z",
+  "source": "MangaDex official public API",
+  "method": "Six selected titles; exact normalized search-title match only except known Solo Leveling ID. English first feed page up to 100, excludes external/empty/future/blocked chapters. No images or exhaustive release verification; unmatched means not enough title matching evidence.",
+  "results": [
+    {
+      "query": "Solo Leveling",
+      "id": "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0",
+      "title": "Solo Leveling",
+      "language": "en",
+      "status": "no-eligible-hosted-chapters",
+      "sampledEligible": 0,
+      "rawTotal": 0,
+      "firstChapterId": null
+    },
+    {
+      "query": "One Piece",
+      "id": "a1c7c817-4e59-43b7-9365-09675a149a6f",
+      "title": "One Piece",
+      "language": "en",
+      "status": "hosted-chapter-metadata-found",
+      "sampledEligible": 1,
+      "rawTotal": 1,
+      "firstChapterId": "391c1555-36ee-423f-a65d-cb5f8abd5286"
+    },
+    {
+      "query": "Chainsaw Man",
+      "id": "a77742b1-befd-49a4-bff5-1ad4e6b0ef7b",
+      "title": "Chainsaw Man",
+      "language": "en",
+      "status": "hosted-chapter-metadata-found",
+      "sampledEligible": 98,
+      "rawTotal": 98,
+      "firstChapterId": "73af4d8d-1532-4a72-b1b9-8f4e5cd295c9"
+    },
+    {
+      "query": "Jujutsu Kaisen",
+      "id": "c52b2ce3-7f95-469c-96b0-479524fb7a1a",
+      "title": "Jujutsu Kaisen",
+      "language": "en",
+      "status": "no-eligible-hosted-chapters",
+      "sampledEligible": 0,
+      "rawTotal": 0,
+      "firstChapterId": null
+    },
+    {
+      "query": "Yotsuba to!",
+      "id": "58be6aa6-06cb-4ca5-bd20-f1392ce451fb",
+      "title": "Yotsuba to!",
+      "language": "en",
+      "status": "hosted-chapter-metadata-found",
+      "sampledEligible": 100,
+      "rawTotal": 135,
+      "firstChapterId": "ff4f79de-6102-4610-8327-539904cfe549"
+    },
+    {
+      "query": "Berserk",
+      "outcome": "unmatched",
+      "candidates": [
+        {
+          "id": "30196491-8fc2-4961-8886-a58f898b1b3e",
+          "title": "Boushoku no Berserk: Ore dake Level to Iu Gainen o Toppa Suru"
+        },
+        {
+          "id": "dc332d04-d3b0-413c-a767-70f5e451b031",
+          "title": "Kuro no Shoukanshi"
+        },
+        {
+          "id": "0c1bfc4c-ca4d-4c1d-80de-8f98793a46c8",
+          "title": "Solo Shinkan no VRMMO Boukenki"
+        },
+        {
+          "id": "06d22615-4713-43dd-985d-377301758d69",
+          "title": "Peerless Battle Spirit"
+        },
+        {
+          "id": "f4e9f182-8345-449b-98b3-54ba4f29493d",
+          "title": "Boushoku no Berserk: Ore Dake Level to Iu Gainen wo Toppa Shite Saikyou"
+        }
+      ]
+    }
+  ]
+}

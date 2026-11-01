@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import type { Manga, Chapter } from '@/lib/providers/mangadex';
 import { useResource } from '@/lib/client';
-import { Cover, Failure } from './catalog';
+import { Cover, Failure, languages } from './catalog';
 import { Button } from './ui/button';
 import { BookmarkButton } from './bookmark-button';
 import { useLocal } from './local-provider';
@@ -115,17 +115,7 @@ export function MangaDetail({ id }: { id: string }) {
                 setOffset(0);
               }}
             >
-              {[
-                ['en', 'English'],
-                ['es', 'Spanish'],
-                ['es-la', 'Spanish (LATAM)'],
-                ['fr', 'French'],
-                ['pt-br', 'Portuguese (BR)'],
-                ['id', 'Indonesian'],
-                ['de', 'German'],
-                ['ru', 'Russian'],
-                ['vi', 'Vietnamese'],
-              ].map(([v, n]) => (
+              {languages.map(([v, n]) => (
                 <option key={v} value={v}>
                   {n}
                 </option>
@@ -144,8 +134,9 @@ export function MangaDetail({ id }: { id: string }) {
           />
         ) : !feed.data?.data.length ? (
           <div className="notice">
-            No readable chapters are available in this language. External and empty chapters are
-            excluded. Try another language or check MangaDex.
+            {feed.data?.total
+              ? 'No readable chapters on this page. Check another page or language.'
+              : 'No hosted chapters were found in this language. MangaDex may list external or empty chapters that cannot be read here.'}
           </div>
         ) : (
           <div className="chapter-list">

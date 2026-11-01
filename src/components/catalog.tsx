@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -12,7 +12,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import type { Manga } from '@/lib/providers/mangadex';
-import { useResource } from '@/lib/client';
+import { clientJSON, useResource } from '@/lib/client';
 import { Button } from './ui/button';
 import { PersonalShelves } from './personal-shelves';
 import { useLocal } from './local-provider';
@@ -66,17 +66,102 @@ export function Cover({ manga }: { manga: Manga }) {
     </div>
   );
 }
-export function MangaCard({ manga }: { manga: Manga }) {
+export const languages = [
+  ['en', 'English'],
+  ['es', 'Spanish'],
+  ['es-la', 'Spanish (LATAM)'],
+  ['fr', 'French'],
+  ['pt-br', 'Portuguese (BR)'],
+  ['id', 'Indonesian'],
+  ['ja', 'Japanese'],
+  ['ko', 'Korean'],
+  ['zh', 'Chinese'],
+  ['zh-hk', 'Chinese (Hong Kong)'],
+  ['de', 'German'],
+  ['ru', 'Russian'],
+  ['vi', 'Vietnamese'],
+  ['it', 'Italian'],
+  ['uk', 'Ukrainian'],
+] as const;
+function LanguageAvailability({
+  id,
+  title,
+  language,
+}: {
+  id: string;
+  title: string;
+  language: string;
+}) {
+  const [state, setState] = useState<'idle' | 'checking' | 'readable' | 'unavailable' | 'unknown'>(
+    'idle',
+  );
+  const request = useRef<AbortController | null>(null);
+  const label = languages.find(([code]) => code === language)?.[1] || language;
+  useEffect(() => () => request.current?.abort(), []);
+  async function check() {
+    const controller = new AbortController();
+    request.current = controller;
+    setState('checking');
+    try {
+      const result = await clientJSON<{ status: string }>(
+        `/api/manga/${id}/availability?language=${encodeURIComponent(language)}`,
+        { signal: controller.signal },
+      );
+      if (!controller.signal.aborted)
+        setState(
+          result.status === 'readable' || result.status === 'unavailable'
+            ? result.status
+            : 'unknown',
+        );
+    } catch {
+      if (!controller.signal.aborted) setState('unknown');
+    }
+  }
   return (
-    <Link href={`/manga/${manga.id}`} className="manga-card">
-      <Cover manga={manga} />
-      <h3>{manga.title}</h3>
-      <p>
-        <span className={`status-dot ${manga.status === 'ongoing' ? 'ongoing' : ''}`} />
-        {manga.status.charAt(0).toUpperCase() + manga.status.slice(1)}
-        {manga.tags[0] && <span className="card-tag">{manga.tags[0].name}</span>}
-      </p>
-    </Link>
+    <div className="card-availability">
+      <button
+        type="button"
+        className="availability-button"
+        aria-label={`Check ${label} availability for ${title}`}
+        disabled={state === 'checking'}
+        onClick={() => void check()}
+      >
+        {state === 'checking' ? 'Checking…' : `Check ${label}`}
+      </button>
+      {state !== 'idle' && state !== 'checking' && (
+        <p role="status" className="availability-status">
+          {state === 'readable'
+            ? `Hosted ${label} chapters found`
+            : state === 'unavailable'
+              ? `No hosted ${label} chapters found`
+              : 'Availability could not be confirmed. Try again.'}
+        </p>
+      )}
+    </div>
+  );
+}
+export function MangaCard({
+  manga,
+  availabilityLanguage,
+}: {
+  manga: Manga;
+  availabilityLanguage?: string;
+}) {
+  return (
+    <article>
+      <Link href={`/manga/${manga.id}`} className="manga-card">
+        <Cover manga={manga} />
+        <h3>{manga.title}</h3>
+        <p>
+          <span className={`status-dot ${manga.status === 'ongoing' ? 'ongoing' : ''}`} />
+          {manga.status.charAt(0).toUpperCase() + manga.status.slice(1)}
+          {manga.tags[0] && <span className="card-tag">{manga.tags[0].name}</span>}
+        </p>
+      </Link>
+      {availabilityLanguage && (
+        <LanguageAvailability id={manga.id} title={manga.title} language={availabilityLanguage} />
+      )}
+    </article>
   );
 }
 export function MangaGrid({
@@ -84,11 +169,13 @@ export function MangaGrid({
   loading,
   error,
   reload,
+  availabilityLanguage,
 }: {
   data?: Manga[];
   loading?: boolean;
   error?: string;
   reload: () => void;
+  availabilityLanguage?: string;
 }) {
   if (error) return <Failure message={error} retry={reload} />;
   if (loading)
@@ -113,7 +200,11 @@ export function MangaGrid({
   return (
     <div className="manga-grid">
       {data.map((m) => (
-        <MangaCard key={m.id} manga={m} />
+        <MangaCard
+          key={`${m.id}:${availabilityLanguage || ''}`}
+          manga={m}
+          availabilityLanguage={availabilityLanguage}
+        />
       ))}
     </div>
   );
@@ -298,18 +389,7 @@ export function DiscoverCatalog({
               value={language}
               onChange={(e) => update(setLanguage, e.target.value)}
             >
-              {[
-                ['en', 'English'],
-                ['es', 'Spanish'],
-                ['es-la', 'Spanish (LATAM)'],
-                ['fr', 'French'],
-                ['pt-br', 'Portuguese (BR)'],
-                ['id', 'Indonesian'],
-                ['ja', 'Japanese'],
-                ['ko', 'Korean'],
-                ['zh', 'Chinese'],
-                ['de', 'German'],
-              ].map(([v, n]) => (
+              {languages.map(([v, n]) => (
                 <option key={v} value={v}>
                   {n}
                 </option>
@@ -364,6 +444,7 @@ export function DiscoverCatalog({
         loading={result.loading}
         error={result.error}
         reload={result.reload}
+        availabilityLanguage={language}
       />
       {result.data && result.data.total > 18 && (
         <div className="pagination">
@@ -393,7 +474,8 @@ export function DiscoverCatalog({
         </div>
       )}
       <p className="catalog-credit">
-        Reading availability and origin labels reflect MangaDex metadata.
+        Check a title for hosted chapters in your selected language. MangaDex catalog listings alone
+        do not guarantee readable chapters.
       </p>
     </>
   );

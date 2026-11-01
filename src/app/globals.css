@@ -1477,3 +1477,26 @@ html:fullscreen {
 html:fullscreen .reader {
   min-height: 100dvh;
 }
+
+.card-availability {
+  margin-top: 4px;
+}
+.availability-button {
+  min-height: 44px;
+  padding: 8px 0;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+}
+.availability-button:disabled {
+  color: var(--muted-foreground);
+  cursor: wait;
+}
+.availability-status {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.4;
+}

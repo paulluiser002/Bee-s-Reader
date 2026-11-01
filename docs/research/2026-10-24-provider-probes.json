@@ -1,0 +1,264 @@
+{
+  "checkedAt": "2026-10-24T14:16:47.031Z",
+  "environment": "Local Node.js on the developer network; not a Vercel deployment test.",
+  "policy": "Anonymous public GETs only; 1.1s origin pacing, 12s request timeout, 2 MB metadata cap. One public first-page image at most, decoded and discarded. No complete chapters, credentials, private library data, protected paid pages, challenge bypass, automatic retries or enabled app integrations. Empty image arrays are availability failures, not successful reading tests.",
+  "observations": [
+    {
+      "name": "Comick English-title search",
+      "url": "https://api.comick.dev/v1.0/search/?q=Solo%20Leveling&page=1&limit=3",
+      "checkedAt": "2026-10-24T14:16:35.332Z",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "elapsedMs": 755,
+      "headers": {
+        "cache-control": "public, s-maxage=900, must-revalidate",
+        "x-ratelimit-limit": "200",
+        "x-ratelimit-remaining": "199",
+        "x-ratelimit-reset": "60"
+      },
+      "outcome": "pass",
+      "detail": [
+        {
+          "title": "Solo Leveling",
+          "slug": "00-solo-leveling",
+          "hid": "71gMd0vF"
+        },
+        {
+          "title": "Solo Leveling (Book Version)",
+          "slug": "solo-leveling-print-version",
+          "hid": "t1wlaOZO"
+        },
+        {
+          "title": "Solo Leveling: Arise",
+          "slug": "solo-leveling-arise",
+          "hid": "2GlTfnpf"
+        }
+      ]
+    },
+    {
+      "name": "Comick Solo Leveling details",
+      "url": "https://api.comick.dev/v1.0/comic/00-solo-leveling/",
+      "checkedAt": "2026-10-24T14:16:36.433Z",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "elapsedMs": 291,
+      "headers": {
+        "cache-control": "s-maxage=3600, stale-while-revalidate",
+        "x-ratelimit-limit": "200",
+        "x-ratelimit-remaining": "199",
+        "x-ratelimit-reset": "60"
+      },
+      "outcome": "pass",
+      "detail": {
+        "comic": {
+          "hid": "71gMd0vF",
+          "slug": "00-solo-leveling",
+          "title": "I am the only the one who levels up"
+        }
+      }
+    },
+    {
+      "name": "Comick Solo Leveling English releases",
+      "url": "https://api.comick.dev/v1.0/comic/71gMd0vF/chapters?lang=en&page=1&limit=1",
+      "checkedAt": "2026-10-24T14:16:37.535Z",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "elapsedMs": 252,
+      "headers": {
+        "cache-control": "max-age=0, s-maxage=3600, must-revalidate",
+        "x-ratelimit-limit": "200",
+        "x-ratelimit-remaining": "198",
+        "x-ratelimit-reset": "59"
+      },
+      "outcome": "pass",
+      "detail": {
+        "releaseEntries": 817,
+        "sample": [
+          {
+            "hid": "5N_wGCXG",
+            "lang": "en",
+            "chap": "200.5"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Comick Solo Leveling image metadata",
+      "url": "https://api.comick.dev/chapter/5N_wGCXG/get_images",
+      "checkedAt": "2026-10-24T14:16:38.637Z",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "elapsedMs": 231,
+      "headers": {
+        "cache-control": "public, s-maxage=1000, must-revalidate",
+        "x-ratelimit-limit": "200",
+        "x-ratelimit-remaining": "199",
+        "x-ratelimit-reset": "60"
+      },
+      "outcome": "no-images",
+      "detail": {
+        "pages": 0
+      }
+    },
+    {
+      "name": "Comick Solo Leveling image metadata",
+      "url": "https://api.comick.dev/chapter/P_ysNE3VbnLbwN/get_images",
+      "checkedAt": "2026-10-24T14:16:39.739Z",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "elapsedMs": 440,
+      "headers": {
+        "cache-control": "public, s-maxage=1000, must-revalidate",
+        "x-ratelimit-limit": "200",
+        "x-ratelimit-remaining": "199",
+        "x-ratelimit-reset": "60"
+      },
+      "outcome": "no-images",
+      "detail": {
+        "pages": 0
+      }
+    },
+    {
+      "name": "Comick Yotsuba details",
+      "url": "https://api.comick.dev/v1.0/comic/yotsuba-to/",
+      "checkedAt": "2026-10-24T14:16:40.840Z",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "elapsedMs": 245,
+      "headers": {
+        "cache-control": "s-maxage=3600, stale-while-revalidate",
+        "x-ratelimit-limit": "200",
+        "x-ratelimit-remaining": "198",
+        "x-ratelimit-reset": "56"
+      },
+      "outcome": "pass",
+      "detail": {
+        "comic": {
+          "hid": "LXJhEK4P",
+          "slug": "yotsuba-to",
+          "title": "Yotsuba to!"
+        }
+      }
+    },
+    {
+      "name": "Comick Yotsuba image metadata",
+      "url": "https://api.comick.dev/chapter/72QoB/get_images",
+      "checkedAt": "2026-10-24T14:16:41.942Z",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "elapsedMs": 220,
+      "headers": {
+        "cache-control": "public, s-maxage=1000, must-revalidate",
+        "x-ratelimit-limit": "200",
+        "x-ratelimit-remaining": "199",
+        "x-ratelimit-reset": "60"
+      },
+      "outcome": "no-images",
+      "detail": {
+        "pages": 0
+      }
+    },
+    {
+      "name": "Comick hosted English chapter details",
+      "url": "https://api.comick.dev/chapter/LcG1AnYc/",
+      "checkedAt": "2026-10-24T14:16:43.043Z",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "elapsedMs": 225,
+      "headers": {
+        "cache-control": "public, s-maxage=7200, must-revalidate",
+        "x-ratelimit-limit": "200",
+        "x-ratelimit-remaining": "199",
+        "x-ratelimit-reset": "60"
+      },
+      "outcome": "pass",
+      "detail": {
+        "chapter": {
+          "hid": "LcG1AnYc",
+          "lang": "en",
+          "chap": "13.2"
+        },
+        "canonical": "/comic/is-she-making-fun-of-me/LcG1AnYc-chapter-13.2-en"
+      }
+    },
+    {
+      "name": "Comick hosted English image metadata",
+      "url": "https://api.comick.dev/chapter/LcG1AnYc/get_images",
+      "checkedAt": "2026-10-24T14:16:44.144Z",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "elapsedMs": 233,
+      "headers": {
+        "cache-control": "public, s-maxage=1000, must-revalidate",
+        "x-ratelimit-limit": "200",
+        "x-ratelimit-remaining": "199",
+        "x-ratelimit-reset": "60"
+      },
+      "outcome": "pass",
+      "detail": {
+        "pages": 4,
+        "dimensions": [
+          {
+            "w": 2481,
+            "h": 3508
+          },
+          {
+            "w": 2481,
+            "h": 3508
+          },
+          {
+            "w": 2481,
+            "h": 3508
+          },
+          {
+            "w": 2481,
+            "h": 3508
+          }
+        ]
+      }
+    },
+    {
+      "name": "Comick one-page image through secure server fetcher",
+      "url": "https://meo.comick.pictures/0-naYFRyC9tLoAO.jpg",
+      "checkedAt": "2026-10-24T14:16:45.846Z",
+      "elapsedMs": 1468,
+      "outcome": "pass",
+      "contentType": "image/jpeg",
+      "detail": {
+        "bytes": 2764279,
+        "width": 2481,
+        "height": 3508,
+        "sha256": "551751f8bf3bf6490eed742fe96d99cd93fe21767a03224bcf10322760bf039b",
+        "retainedImageFile": false
+      }
+    },
+    {
+      "name": "MangaPDF documented host health",
+      "url": "https://api.coffeemanga.shop/healthz",
+      "checkedAt": "2026-10-24T14:16:45.847Z",
+      "status": 521,
+      "contentType": "application/json; charset=utf-8",
+      "elapsedMs": 752,
+      "headers": {
+        "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+        "retry-after": "120"
+      },
+      "outcome": "unavailable",
+      "detail": "No successful JSON response; no retry or challenge bypass attempted."
+    },
+    {
+      "name": "MangaPDF documented host health",
+      "url": "https://api.mangapdf.org/healthz",
+      "checkedAt": "2026-10-24T14:16:46.599Z",
+      "status": 521,
+      "contentType": "application/json; charset=utf-8",
+      "elapsedMs": 429,
+      "headers": {
+        "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+        "retry-after": "120"
+      },
+      "outcome": "unavailable",
+      "detail": "No successful JSON response; no retry or challenge bypass attempted."
+    }
+  ]
+}

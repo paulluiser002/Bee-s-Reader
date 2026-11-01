@@ -2,6 +2,16 @@
 
 Date: October 24, 2026 (Asia/Manila).
 
+## English availability — November 1, 2026
+
+The MangaDex availability route and Discover controls distinguish eligible hosted chapter metadata, a fully checked empty feed, and inconclusive results. Checks are explicitly requested per title, use the selected language, and preserve upstream error handling. Chapter detail describes filtered empty pages without claiming the entire language is empty. The 100-item bound, provider errors, invalid parameters, selected-language changes and mobile layout are covered by tests; in-flight card checks are cancelled on unmount.
+
+The bounded [six-title English coverage sample](research/2026-11-01-english-coverage.json) found no eligible hosted English releases for Solo Leveling or Jujutsu Kaisen; some eligible metadata existed for One Piece, Chainsaw Man and Yotsuba to!; Berserk did not produce an exact normalized title in the first five search results. Search matching and a single feed page are not a full catalog audit. Sampled metadata is not proof that every page image succeeds.
+
+The [October provider research](research/2026-10-24-english-providers.md) recorded a successful Comick image probe at that time. On November 1, three anonymous Comick chapter-image metadata requests returned HTTP 403; there was no bypass or attempt to use private credentials. Its [current terms](https://comick.dev/terms) do not establish a third-party image-display grant, and MangaPDF's documentation returned HTTP 521. Neither was enabled. No broad new English catalog or source-integration permission is claimed.
+
+Validation: 60 unit tests and 35 browser tests passed, including English availability, filtered-page navigation, all configured languages, mobile layouts and accessibility. ESLint, TypeScript, the production build and PWA test passed. Local `next start` returned `unavailable` for Solo Leveling and `readable` for Chainsaw Man; the latter’s real MangaDex data-saver page returned HTTP 200 as a 208,469-byte JPEG. These checks ran locally, not on the current Vercel revision.
+
 ## Vercel transition — current release
 
 The user approved browser-local profiles without login or a server database. This supersedes the original SQLite/local-only architecture. The previous database file is ignored and untouched; it contained no bookmarks/history at migration.
@@ -25,7 +35,7 @@ Live requests were rerun after the deployment changes. An initial MangaDex timeo
 
 Mobile light/dark Settings and fullscreen were visually inspected; captures are `screenshots/vercel-*.png` and contain explicit fixture artwork where applicable. The rendered design detector caught existing 10px labels, raised to 11px; the final rendered Settings scan reported no findings. Chapter binaries are neither persisted nor bulk downloaded. PWA cache contains only the static offline page and three icon files, never provider/API responses or reading images.
 
-**Not yet deployed to Vercel.** Actual Vercel network access, Runtime Cache availability, streaming transport and service-worker update lifecycle need a deployed-origin smoke test. Runtime Cache is ephemeral and region-scoped; shared cooldowns plus per-process pacing do not constitute an atomic distributed limiter. Public traffic may need stronger rate control. Profiles are per browser profile/origin; no automatic cross-device sync, shared-browser separation or account recovery. These limits and deployment steps are in README.
+**At the October 24 validation, the project was not yet deployed to Vercel.** The initial release was subsequently deployed; each later revision needs its own deployed-origin smoke test for network access, Runtime Cache, streaming transport and service-worker updates. Runtime Cache is ephemeral and region-scoped; shared cooldowns plus per-process pacing do not constitute an atomic distributed limiter. Public traffic may need stronger rate control. Profiles are per browser profile/origin; no automatic cross-device sync, shared-browser separation or account recovery. These limits and deployment steps are in README.
 
 ## Initial local-only release — historical record
 

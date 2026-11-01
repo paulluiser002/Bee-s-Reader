@@ -51,12 +51,16 @@ Do not put private keys in `NEXT_PUBLIC_*` variables. None of these integrations
 ## What works
 
 - Home with real popular/recent MangaDex catalog data and personal continue-reading/saved shelves.
-- Debounced Discover search; language, publication status, origin, genre and sort filters; pagination and real loading/empty/error states.
+- Debounced Discover search; language, publication status, origin, genre and sort filters; pagination and real loading/empty/error states. Use **Check English** (or the selected language) on a title to check MangaDex hosted chapter metadata before opening it.
 - Title details, covers, creators, tags, source links, credited chapter feeds, bookmarks, and resume links.
 - Continuous vertical reading, data-saver by default, Original quality switch, page width controls, per-image retry, chapter selector, previous/next, and keyboard navigation.
 - Local bookmarks, per-chapter history, latest-per-title resume, persisted preferences, and confirmed history clearing.
 - Light, Dark, and System modes with a pre-paint theme script, semantic honey/ivory/charcoal tokens, reduced motion, safe areas, bottom navigation, and 320px layouts.
 - Optional supplementary metadata, matched **only by provider IDs linked by MangaDex**, with independent source attribution/errors. No speculative title matching or fabricated availability.
+
+### Checking chapter availability
+
+Discover checks availability only when you select a title's **Check** button, avoiding a burst of provider requests for every catalog page. “Hosted chapters found” means MangaDex returned at least one published, nonempty, non-external, unblocked chapter in that language; an individual image can still fail. If the first 100 matching releases are all filtered but more exist, or the provider cannot be reached, availability remains unconfirmed. Chapter-list pagination can also contain an empty filtered page even when later releases exist. These checks do not add English translations or pages that the source does not provide.
 
 ### Reader controls and progress
 
