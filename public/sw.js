@@ -1,5 +1,5 @@
 /* Only static offline/help assets are cached. Personal data stays in browser storage. */
-const OFFLINE_CACHE = 'bees-reader-offline-v1';
+const OFFLINE_CACHE = 'bees-reader-offline-v2';
 const OFFLINE_ASSETS = [
   '/offline.html',
   '/icons/icon-192.png',

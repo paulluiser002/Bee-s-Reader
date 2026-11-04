@@ -6,6 +6,8 @@ import {
   toManga,
   isReadable,
   searchParams,
+  searchHostedManga,
+  md,
 } from '@/lib/providers/mangadex';
 import { anilistSchema } from '@/lib/providers/anilist';
 import { jikanSchema } from '@/lib/providers/jikan';
@@ -35,6 +37,38 @@ describe('provider contracts', () => {
     expect(p.get('offset')).toBe('24');
     expect(searchSchema.safeParse({ url: 'http://localhost' }).success).toBe(false);
     expect(searchSchema.safeParse({ offset: '10001' }).success).toBe(false);
+  });
+  it('keeps only titles with a readable chapter in the requested language', async () => {
+    const otherId = '00000000-0000-4000-8000-000000000002';
+    const chapter = {
+      id,
+      type: 'chapter',
+      attributes: {
+        chapter: '1',
+        volume: null,
+        title: null,
+        pages: 4,
+        translatedLanguage: 'en',
+        externalUrl: null,
+        publishAt: '2020-01-01T00:00:00Z',
+      },
+      relationships: [],
+    };
+    const mock = vi.spyOn(md, 'json').mockImplementation(async (url, schema) => {
+      const data = !url.includes('/feed?')
+        ? [rawManga, { ...rawManga, id: otherId }]
+        : url.includes(otherId)
+          ? [chapter]
+          : [{ ...chapter, attributes: { ...chapter.attributes, pages: 0 } }];
+      return schema.parse({ data, total: data.length, offset: 0, limit: 12 });
+    });
+    try {
+      const result = await searchHostedManga(searchSchema.parse({ hosted: '1', limit: '2' }));
+      expect(result.data.map((manga) => manga.id)).toEqual([otherId]);
+      expect(mock.mock.calls.filter(([url]) => url.includes('/feed?'))).toHaveLength(2);
+    } finally {
+      mock.mockRestore();
+    }
   });
   it('normalizes real-shaped manga without fabricating images or availability', () => {
     const m = toManga(mangaSchema.parse(rawManga));

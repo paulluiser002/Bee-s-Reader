@@ -1,7 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Compass, Library, History, Settings, Hexagon, ArrowUpRight } from 'lucide-react';
+import { BookOpen, Compass, Library, History, Settings, ArrowUpRight } from 'lucide-react';
+import { BeeMark } from './bee-mark';
 const items = [
   { href: '/', label: 'Home', icon: BookOpen },
   { href: '/discover', label: 'Discover', icon: Compass },
@@ -12,8 +13,7 @@ export function Brand() {
   return (
     <Link href="/" className="brand">
       <span className="brand-mark">
-        <Hexagon size={31} strokeWidth={1.8} />
-        <BookOpen className="brand-book" size={17} />
+        <BeeMark />
       </span>
       <span>
         Bee’s <strong>Reader</strong>

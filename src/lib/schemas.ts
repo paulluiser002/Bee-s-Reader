@@ -28,6 +28,7 @@ export const searchSchema = z
     offset: z.coerce.number().int().min(0).max(9900).default(0),
     limit: z.coerce.number().int().min(1).max(100).default(18),
     tag: uuid.optional(),
+    hosted: z.literal('1').optional(),
     ids: z
       .string()
       .transform((v) => v.split(','))

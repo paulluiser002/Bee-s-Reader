@@ -7,12 +7,12 @@ import {
   Search,
   SlidersHorizontal,
   Leaf,
-  Sparkles,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
 import type { Manga } from '@/lib/providers/mangadex';
 import { useResource } from '@/lib/client';
+import { BeeMark } from './bee-mark';
 import { Button } from './ui/button';
 import { PersonalShelves } from './personal-shelves';
 export type MangaResults = { data: Manga[]; total: number; limit: number; offset: number };
@@ -145,33 +145,16 @@ const genres = [
   ['Action', '391b0423-d847-456f-aff0-8b0cfc03066b'],
 ];
 export function HomeCatalog() {
-  const popular = useResource<MangaResults>(
-    `/api/manga?sort=popular&limit=6&language=en`,
-  );
-  const recent = useResource<MangaResults>(
-    `/api/manga?sort=recent&limit=12&language=en`,
-  );
+  const popular = useResource<MangaResults>(`/api/manga?sort=popular&limit=6&language=en&hosted=1`);
+  const recent = useResource<MangaResults>(`/api/manga?sort=recent&limit=12&language=en&hosted=1`);
   return (
     <>
-      <div className="page-heading">
-        <div>
-          <h1>Make room for a good story.</h1>
-          <p>Your next little obsession is just a chapter away.</p>
-        </div>
-        <Link href="/discover" className="icon-button desktop-search" aria-label="Search stories">
-          <Search size={23} />
-        </Link>
-      </div>
-      <section className="welcome-panel">
-        <div>
-          <h2>
-            A world to get lost in.
-            <br />A nook to call your own.
-          </h2>
-          <p>
-            Manga, manhwa, and manhua.
-            <br />
-            Just you and the next chapter.
+      <section className="welcome-panel" aria-labelledby="home-heading">
+        <div className="welcome-copy">
+          <p className="welcome-kicker">Your little reading nook</p>
+          <h1 id="home-heading">Make room for a good story.</h1>
+          <p className="welcome-description">
+            Find your next favorite manga, manhwa, or manhua, one chapter at a time.
           </p>
           <Button asChild>
             <Link href="/discover">
@@ -181,10 +164,11 @@ export function HomeCatalog() {
           </Button>
         </div>
         <div className="welcome-symbol" aria-hidden="true">
-          <BookOpen />
-          <span className="symbol-spark">
-            <Sparkles />
-          </span>
+          <svg className="welcome-trail" viewBox="0 0 240 220" fill="none">
+            <path d="M28 158c-17-26 22-78 79-107s108-31 115-6c8 29-30 73-88 103s-92 33-106 10Z" />
+            <path d="M52 47v16m-8-8h16m128 112v24m-12-12h24M204 81v12m-6-6h12" />
+          </svg>
+          <BeeMark className="welcome-bee" />
         </div>
       </section>
       <div className="chips home-chips">

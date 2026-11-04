@@ -177,6 +177,23 @@ export async function searchManga(q: z.infer<typeof searchSchema>) {
   raw.data.forEach(rememberCover);
   return { ...raw, data: raw.data.map((m) => toManga(m, q.language)) };
 }
+export async function searchHostedManga(q: z.infer<typeof searchSchema>) {
+  const limit = Math.min(q.limit, 12);
+  const result = await searchManga({ ...q, limit: Math.min(limit * 2, 10000 - q.offset) });
+  const data: Manga[] = [];
+  for (let index = 0; index < result.data.length && data.length < limit; index += 6) {
+    const batch = result.data.slice(index, index + 6);
+    const matches = await Promise.all(
+      batch.map(async (manga) => {
+        const feed = await getFeed(manga.id, q.language, 0, 12, 300000);
+        return feed.data.some((chapter) => chapter.language === q.language);
+      }),
+    );
+    data.push(...batch.filter((_, index) => matches[index]));
+  }
+  const shelf = data.slice(0, limit);
+  return { ...result, data: shelf, limit, total: shelf.length };
+}
 export async function getRawManga(id: string) {
   uuid.parse(id);
   const raw = (
@@ -207,7 +224,7 @@ export async function getChapter(id: string) {
     );
   return toChapter(raw);
 }
-export async function getFeed(id: string, lang = 'en', offset = 0, limit = 100) {
+export async function getFeed(id: string, lang = 'en', offset = 0, limit = 100, ttl = 15000) {
   uuid.parse(id);
   const p = new URLSearchParams({
     limit: String(limit),
@@ -228,7 +245,7 @@ export async function getFeed(id: string, lang = 'en', offset = 0, limit = 100) 
       offset: z.number(),
       limit: z.number(),
     }),
-    { ttl: 15000 },
+    { ttl },
   );
   return { ...raw, data: raw.data.filter(isReadable).map(toChapter) };
 }
