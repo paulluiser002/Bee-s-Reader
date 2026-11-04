@@ -60,35 +60,50 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <aside className="sidebar">
         <Brand />
         <nav aria-label="Desktop navigation">{links}</nav>
-        <div className="sidebar-support">
-          <button
-            className="coffee-trigger"
-            aria-label="Coffee support"
-            title="Buy me a coffee"
-            aria-haspopup="dialog"
-            onClick={() => {
-              setHire(false);
-              setFeedback('');
-              support.current?.showModal();
-            }}
-          >
-            <svg
-              className="coffee-cup"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+        <Link className={`nav-link ${pathname === '/settings' ? 'active' : ''}`} href="/settings">
+          <Settings size={21} />
+          Settings
+        </Link>
+        <Link className="source-link" href="/about">
+          Made possible by MangaDex <ArrowUpRight size={14} />
+        </Link>
+      </aside>
+      <div className="site">
+        <header className="site-header">
+          <Brand />
+          <div className="header-actions">
+            <Link className="icon-button" href="/settings" aria-label="Settings">
+              <Settings size={22} />
+            </Link>
+            <button
+              className="coffee-trigger"
+              aria-label="Coffee support"
+              title="Buy me a coffee"
+              aria-haspopup="dialog"
+              onClick={() => {
+                setHire(false);
+                setFeedback('');
+                support.current?.showModal();
+              }}
             >
-              <path d="M18 8h1a4 4 0 0 1 0 8h-1M3 8h15v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
-              <path className="coffee-steam" d="M6 6c-2-1.5 2-2.5 0-4" />
-              <path className="coffee-steam" d="M10 6c-2-1.5 2-2.5 0-4" />
-              <path className="coffee-steam" d="M14 6c-2-1.5 2-2.5 0-4" />
-            </svg>
-          </button>
-        </div>
+              <svg
+                className="coffee-cup"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M18 8h1a4 4 0 0 1 0 8h-1M3 8h15v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
+                <path className="coffee-steam" d="M6 6c-2-1.5 2-2.5 0-4" />
+                <path className="coffee-steam" d="M10 6c-2-1.5 2-2.5 0-4" />
+                <path className="coffee-steam" d="M14 6c-2-1.5 2-2.5 0-4" />
+              </svg>
+            </button>
+          </div>
+        </header>
         <dialog
           className="coffee-modal"
           ref={support}
@@ -184,21 +199,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
         </dialog>
-        <Link className={`nav-link ${pathname === '/settings' ? 'active' : ''}`} href="/settings">
-          <Settings size={21} />
-          Settings
-        </Link>
-        <Link className="source-link" href="/about">
-          Made possible by MangaDex <ArrowUpRight size={14} />
-        </Link>
-      </aside>
-      <div className="site">
-        <header className="mobile-header">
-          <Brand />
-          <Link className="icon-button" href="/settings" aria-label="Settings">
-            <Settings size={22} />
-          </Link>
-        </header>
         <main id="main" className="main-content">
           {children}
         </main>
