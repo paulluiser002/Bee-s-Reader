@@ -522,36 +522,8 @@ input[type='search'] {
   }
   .sidebar-support {
     display: grid;
-    gap: 8px;
+    justify-items: center;
     margin: auto 0 16px;
-  }
-  .support-dialog {
-    position: fixed;
-    inset: 0;
-    margin: auto;
-    width: min(360px, calc(100% - 32px));
-    max-height: calc(100dvh - 32px);
-    overflow: auto;
-    padding: 24px;
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    background: var(--card);
-    color: var(--foreground);
-  }
-  .support-dialog::backdrop {
-    background: #111318b3;
-  }
-  .support-dialog p {
-    margin: 8px 0 16px;
-    color: var(--muted-foreground);
-  }
-  .support-dialog img {
-    display: block;
-    width: min(100%, 240px);
-    height: auto;
-    margin: 0 auto 16px;
-    background: white;
-    border-radius: 10px;
   }
   .sidebar .source-link {
     margin: 18px 8px 0;
@@ -1553,4 +1525,377 @@ html:fullscreen .reader {
   .welcome-symbol {
     width: 96px;
   }
+}
+
+.coffee-trigger,
+.coffee-modal {
+  --brand-gold: var(--honey);
+  --brand-selected: color-mix(in srgb, var(--honey) 16%, var(--card));
+  --brand-link: var(--primary);
+  --text-muted: var(--muted-foreground);
+  --text: var(--foreground);
+  --surface: var(--card);
+  --surface-alt: var(--background);
+}
+.coffee-trigger {
+  display: grid;
+  place-content: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--r-soft, var(--surface));
+  color: var(--r-muted, var(--text-muted));
+  cursor: pointer;
+}
+/* Keep all effects on the shared trigger so both workspace headers agree. */
+.coffee-trigger.coffee-trigger.coffee-trigger {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  min-width: 50px;
+  min-height: 50px;
+  align-self: center;
+  overflow: visible;
+  background: var(--brand-gold, #d6a23f);
+  color: var(--primary-foreground);
+  transition: transform 180ms ease;
+}
+.coffee-trigger.coffee-trigger.coffee-trigger:hover {
+  transform: scale(1.1);
+  background: var(--brand-gold, #d6a23f);
+  color: var(--primary-foreground);
+}
+.coffee-trigger:focus-visible {
+  outline: 2px solid var(--brand-link, #93600f);
+  outline-offset: 3px;
+}
+.coffee-trigger::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--brand-gold, #d6a23f);
+  background: var(--brand-gold, #d6a23f);
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  animation: coffee-pulse 3s ease-out infinite;
+}
+.coffee-trigger.coffee-trigger .coffee-cup {
+  width: 24px;
+  height: 24px;
+}
+.coffee-cup {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  transform-origin: 50% 80%;
+  animation: coffee-wiggle 3s ease-in-out infinite;
+}
+/* Replace Lucide's three static steam marks, preserving its cup and handle. */
+.coffee-cup > path[d$='2v2'] {
+  display: none;
+}
+.coffee-steam {
+  opacity: 0;
+  animation: coffee-steam 3s ease-in-out infinite;
+}
+.coffee-steam:nth-last-child(2) {
+  animation-delay: 350ms;
+}
+.coffee-steam:last-child {
+  animation-delay: 700ms;
+}
+.coffee-trigger:hover::before,
+.coffee-trigger:focus-visible::before,
+.coffee-trigger:hover .coffee-cup,
+.coffee-trigger:focus-visible .coffee-cup,
+.coffee-trigger:hover .coffee-steam,
+.coffee-trigger:focus-visible .coffee-steam {
+  animation-play-state: paused;
+}
+@keyframes coffee-pulse {
+  0% {
+    transform: scale(0.94);
+    opacity: 0;
+  }
+  14% {
+    opacity: 0.4;
+  }
+  60%,
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+@keyframes coffee-steam {
+  0% {
+    transform: translateY(1.5px);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  48% {
+    transform: translateY(-3.5px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-3.5px);
+    opacity: 0;
+  }
+}
+@keyframes coffee-wiggle {
+  0%,
+  61%,
+  83%,
+  100% {
+    transform: rotate(0);
+  }
+  65% {
+    transform: rotate(-8deg);
+  }
+  70% {
+    transform: rotate(8deg);
+  }
+  75% {
+    transform: rotate(-4deg);
+  }
+  79% {
+    transform: rotate(2deg);
+  }
+}
+.coffee-modal {
+  width: min(480px, calc(100vw - 32px));
+  padding: 30px 26px 24px;
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  text-align: center;
+}
+.coffee-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 7px;
+  min-width: 32px;
+  min-height: 32px;
+  border-color: transparent;
+  background: transparent;
+}
+.coffee-symbol {
+  display: grid;
+  place-content: center;
+  width: 66px;
+  height: 66px;
+  margin: 6px auto 16px;
+  border-radius: 50%;
+  background: var(--brand-selected);
+  color: var(--brand-link);
+}
+.coffee-modal .coffee-title {
+  margin: 0 0 10px;
+  font-size: 25px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+.coffee-modal .coffee-description {
+  margin: 0 0 22px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.coffee-segments {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 4px;
+  border: 0;
+  border-radius: 10px;
+  padding: 4px;
+  margin: 0;
+  background: var(--surface-alt, var(--brand-soft));
+}
+.coffee-segments label {
+  min-width: 0;
+  position: relative;
+  cursor: pointer;
+}
+.coffee-segments input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.coffee-segments span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.coffee-segments input:checked + span {
+  background: var(--brand-selected);
+  color: var(--brand-link);
+  border-color: var(--brand-link);
+}
+.coffee-segments input:focus-visible + span {
+  outline: 2px solid var(--brand-link);
+  outline-offset: 2px;
+}
+.coffee-content {
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+  padding-top: 20px;
+}
+.coffee-donation {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+.coffee-qr {
+  display: block;
+  width: 256px;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  image-rendering: pixelated;
+}
+.coffee-download {
+  text-decoration: none;
+}
+.coffee-donation p,
+.coffee-hire > p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.coffee-email {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  margin-top: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.coffee-email input {
+  min-width: 0;
+  flex: 1;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 4px;
+  font-size: 14px;
+  color: var(--text);
+}
+.coffee-email button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 8px;
+  font-size: 12px;
+}
+.coffee-hire .coffee-feedback {
+  margin-top: 10px;
+  min-height: 20px;
+}
+@media (max-width: 440px) {
+  .coffee-modal {
+    padding: 28px 18px 20px;
+  }
+  .coffee-email {
+    flex-wrap: wrap;
+  }
+  .coffee-email input {
+    flex-basis: 100%;
+  }
+  .coffee-email button {
+    margin-left: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .coffee-trigger::before,
+  .coffee-cup,
+  .coffee-steam {
+    animation: none;
+  }
+  .coffee-trigger::before {
+    opacity: 0;
+  }
+  .coffee-steam {
+    opacity: 0.9;
+    transform: none;
+  }
+  .coffee-trigger.coffee-trigger.coffee-trigger {
+    transition: none;
+  }
+}
+
+.guide-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+}
+.coffee-symbol svg {
+  width: 32px;
+  height: 32px;
+}
+.coffee-modal .coffee-title {
+  font-family: Georgia, serif;
+  font-size: 30px;
+  font-weight: 500;
+}
+.coffee-modal .coffee-close {
+  min-width: 44px;
+  min-height: 44px;
+}
+.coffee-segments svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+.coffee-content {
+  min-height: 275px;
+}
+.coffee-email button svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+.coffee-modal {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--foreground);
+}
+.coffee-modal::backdrop {
+  background: #111318b3;
+}
+.coffee-modal .coffee-close {
+  border-radius: 50%;
+}
+.coffee-modal .coffee-segments span {
+  min-height: 44px;
+}
+.coffee-hire[hidden],
+.coffee-donation[hidden] {
+  display: none;
 }

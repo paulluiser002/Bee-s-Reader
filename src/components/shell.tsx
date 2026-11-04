@@ -1,8 +1,19 @@
 'use client';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Compass, Library, History, Settings, ArrowUpRight } from 'lucide-react';
+import {
+  BookOpen,
+  Compass,
+  Library,
+  History,
+  Settings,
+  ArrowUpRight,
+  BriefcaseBusiness,
+  Coffee,
+  Copy,
+  X,
+} from 'lucide-react';
 import { BeeMark } from './bee-mark';
 const items = [
   { href: '/', label: 'Home', icon: BookOpen },
@@ -26,6 +37,9 @@ export function Brand() {
 export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const support = useRef<HTMLDialogElement>(null);
+  const [hire, setHire] = useState(false);
+  const [feedback, setFeedback] = useState('');
+  const email = 'charotreading.biz@gmail.com';
   if (pathname.startsWith('/read/')) return <>{children}</>;
   const links = items.map(({ href, label, icon: Icon }) => (
     <Link
@@ -48,13 +62,18 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <nav aria-label="Desktop navigation">{links}</nav>
         <div className="sidebar-support">
           <button
-            className="button button-primary"
+            className="coffee-trigger"
+            aria-label="Coffee support"
+            title="Buy me a coffee"
             aria-haspopup="dialog"
-            onClick={() => support.current?.showModal()}
+            onClick={() => {
+              setHire(false);
+              setFeedback('');
+              support.current?.showModal();
+            }}
           >
             <svg
-              width="21"
-              height="21"
+              className="coffee-cup"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -64,31 +83,105 @@ export function Shell({ children }: { children: React.ReactNode }) {
               aria-hidden="true"
             >
               <path d="M18 8h1a4 4 0 0 1 0 8h-1M3 8h15v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
-              <path d="M6 6c-2-1.5 2-2.5 0-4m4 4c-2-1.5 2-2.5 0-4m4 4c-2-1.5 2-2.5 0-4" />
+              <path className="coffee-steam" d="M6 6c-2-1.5 2-2.5 0-4" />
+              <path className="coffee-steam" d="M10 6c-2-1.5 2-2.5 0-4" />
+              <path className="coffee-steam" d="M14 6c-2-1.5 2-2.5 0-4" />
             </svg>
-            Buy me a coffee
           </button>
-          <a className="button button-outline" href="mailto:charotreading.biz@gmail.com">
-            Hire me <ArrowUpRight size={15} aria-hidden="true" />
-          </a>
         </div>
-        <dialog className="support-dialog" ref={support} aria-labelledby="support-title">
-          <h2 id="support-title">Buy me a coffee</h2>
-          <p>Support Bee’s Reader with any QR Ph-enabled wallet or banking app.</p>
-          <img
-            src="/support-qr.png"
-            alt="QR Ph code to support the creator"
-            width={240}
-            height={240}
-            loading="lazy"
-          />
-          <div className="row">
-            <a className="button button-primary" href="/support-qr.png" download>
-              Download QR
-            </a>
-            <form method="dialog">
-              <button className="button button-outline">Close</button>
-            </form>
+        <dialog
+          className="coffee-modal"
+          ref={support}
+          aria-labelledby="support-title"
+          aria-describedby="support-description"
+        >
+          <form method="dialog">
+            <button
+              className="icon-button coffee-close"
+              aria-label="Close coffee support"
+              autoFocus
+            >
+              <X size={18} />
+            </button>
+          </form>
+          <span className="coffee-symbol" aria-hidden="true">
+            <Coffee />
+          </span>
+          <h2 id="support-title" className="coffee-title">
+            Enjoying the readings?
+          </h2>
+          <p id="support-description" className="coffee-description">
+            If Bee’s Reader has been helpful, consider showing some support or getting in touch for
+            work opportunities.
+          </p>
+          <fieldset className="coffee-segments" aria-label="Support options">
+            <label>
+              <input
+                type="radio"
+                name="support-option"
+                checked={!hire}
+                onChange={() => setHire(false)}
+              />
+              <span>
+                <Coffee aria-hidden="true" />
+                Buy me a coffee
+              </span>
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="support-option"
+                checked={hire}
+                onChange={() => setHire(true)}
+              />
+              <span>
+                <BriefcaseBusiness aria-hidden="true" />
+                Hire me
+              </span>
+            </label>
+          </fieldset>
+          <div className="coffee-content">
+            <div className="coffee-donation" hidden={hire}>
+              <img
+                className="coffee-qr"
+                src="/support-qr.png"
+                alt="QR Ph code to support the creator"
+                width={256}
+                height={256}
+              />
+              <p>
+                Scan to buy me a coffee.
+                <br />
+                Works on all QR Ph-enabled e-wallets and mobile banks.
+              </p>
+              <a className="button button-outline coffee-download" href="/support-qr.png" download>
+                Download QR
+              </a>
+            </div>
+            <div className="coffee-hire" hidden={!hire}>
+              <p>Have a project in mind? Let’s work together.</p>
+              <div className="coffee-email">
+                <input aria-label="Contact email" readOnly value={email} />
+                <button
+                  type="button"
+                  className="button button-outline"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(email);
+                      setFeedback('Email copied.');
+                    } catch {
+                      setFeedback('Select the email address to copy it manually.');
+                    }
+                  }}
+                >
+                  <Copy aria-hidden="true" />
+                  Copy Email
+                </button>
+              </div>
+              <p className="coffee-feedback" role="status">
+                {feedback}
+              </p>
+            </div>
           </div>
         </dialog>
         <Link className={`nav-link ${pathname === '/settings' ? 'active' : ''}`} href="/settings">
