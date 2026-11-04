@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { BookOpen, Compass, Library, History, Settings, ArrowUpRight } from 'lucide-react';
 import { BeeMark } from './bee-mark';
@@ -24,6 +25,7 @@ export function Brand() {
 }
 export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const support = useRef<HTMLDialogElement>(null);
   if (pathname.startsWith('/read/')) return <>{children}</>;
   const links = items.map(({ href, label, icon: Icon }) => (
     <Link
@@ -44,13 +46,51 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <aside className="sidebar">
         <Brand />
         <nav aria-label="Desktop navigation">{links}</nav>
-        <div className="sidebar-note">
-          <BookOpen size={27} />
-          <p>
-            A good story.
-            <br />A little time for you.
-          </p>
+        <div className="sidebar-support">
+          <button
+            className="button button-primary"
+            aria-haspopup="dialog"
+            onClick={() => support.current?.showModal()}
+          >
+            <svg
+              width="21"
+              height="21"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M18 8h1a4 4 0 0 1 0 8h-1M3 8h15v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
+              <path d="M6 6c-2-1.5 2-2.5 0-4m4 4c-2-1.5 2-2.5 0-4m4 4c-2-1.5 2-2.5 0-4" />
+            </svg>
+            Buy me a coffee
+          </button>
+          <a className="button button-outline" href="mailto:charotreading.biz@gmail.com">
+            Hire me <ArrowUpRight size={15} aria-hidden="true" />
+          </a>
         </div>
+        <dialog className="support-dialog" ref={support} aria-labelledby="support-title">
+          <h2 id="support-title">Buy me a coffee</h2>
+          <p>Support Bee’s Reader with any QR Ph-enabled wallet or banking app.</p>
+          <img
+            src="/support-qr.png"
+            alt="QR Ph code to support the creator"
+            width={240}
+            height={240}
+            loading="lazy"
+          />
+          <div className="row">
+            <a className="button button-primary" href="/support-qr.png" download>
+              Download QR
+            </a>
+            <form method="dialog">
+              <button className="button button-outline">Close</button>
+            </form>
+          </div>
+        </dialog>
         <Link className={`nav-link ${pathname === '/settings' ? 'active' : ''}`} href="/settings">
           <Settings size={21} />
           Settings
