@@ -43,7 +43,7 @@ export function InstallApp() {
   }, []);
   return (
     <section className="settings-section">
-      <h2>Take your nook with you</h2>
+      <h2>Install app</h2>
       <p className="muted small">
         Install Bee’s Reader for an app window and a Home Screen shortcut. Stories still need an
         internet connection.

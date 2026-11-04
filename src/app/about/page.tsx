@@ -6,7 +6,7 @@ export default function About() {
       <div className="page-heading">
         <div>
           <h1>A small space for stories.</h1>
-          <p>Private, ad-free, and made for reading.</p>
+          <p>Chapters come from MangaDex. Your reading progress stays in this browser.</p>
         </div>
       </div>
       <h2>Made possible by MangaDex</h2>
@@ -23,9 +23,8 @@ export default function About() {
       <p>
         Manga and artwork belong to their respective creators and rights holders. Each chapter
         credits its scanlation groups and links to its source on MangaDex. If no group is listed,
-        its MangaDex uploader is credited. Group leaders’ removal requests must be honored; the site
-        operator can block group IDs with MANGADEX_BLOCKED_GROUPS. Bee’s Reader has no
-        advertisements, paywalls, or paid content access.
+        its MangaDex uploader is credited. Bee’s Reader has no advertisements, paywalls, or paid
+        content access.
       </p>
       <h2>Your data stays close</h2>
       <p>

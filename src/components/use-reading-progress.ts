@@ -6,6 +6,7 @@ import { useLocal } from './local-provider';
 type Position = {
   mangaId: string;
   chapterId: string;
+  chapterNumber?: string;
   pageIndex: number;
   scrollFraction: number;
   completed: boolean;
@@ -14,6 +15,7 @@ export function useReadingProgress({
   stream,
   end,
   chapterId,
+  chapterNumber,
   mangaId,
   pageCount,
   loaded,
@@ -22,6 +24,7 @@ export function useReadingProgress({
   stream: RefObject<HTMLDivElement | null>;
   end: RefObject<HTMLDivElement | null>;
   chapterId: string;
+  chapterNumber?: string;
   mangaId: string;
   pageCount: number;
   loaded: Set<number>;
@@ -96,13 +99,14 @@ export function useReadingProgress({
     snapshot.current = {
       mangaId,
       chapterId,
+      chapterNumber,
       pageIndex: completed ? pageCount - 1 : pageIndex,
       scrollFraction: completed
         ? 1
         : positionInPage(-current.getBoundingClientRect().top, current.offsetHeight),
       completed,
     };
-  }, [chapterId, mangaId, pageCount, stream]);
+  }, [chapterId, chapterNumber, mangaId, pageCount, stream]);
   const save = useCallback(
     async (_keepalive = false, measure = true) => {
       void _keepalive;

@@ -51,6 +51,7 @@ export const defaults: Preferences = preferencesSchema.parse({});
 export const progressSchema = z.strictObject({
   mangaId: uuid,
   chapterId: uuid,
+  chapterNumber: z.string().max(100).optional(),
   pageIndex: z.number().int().min(0).max(1999),
   scrollFraction: z.number().min(0).max(1),
   completed: z.boolean(),

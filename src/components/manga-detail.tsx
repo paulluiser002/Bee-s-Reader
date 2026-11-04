@@ -16,10 +16,10 @@ import { Button } from './ui/button';
 import { BookmarkButton } from './bookmark-button';
 import { useLocal } from './local-provider';
 import { latestPerManga } from '@/lib/progress';
-export function MangaDetail({ id }: { id: string }) {
+export function MangaDetail({ id, initialLanguage }: { id: string; initialLanguage?: string }) {
   const local = useLocal();
   const resume = latestPerManga(local.state.history).find((p) => p.mangaId === id);
-  const [langOverride, setLang] = useState<string | null>(null);
+  const [langOverride, setLang] = useState<string | null>(initialLanguage ?? null);
   const lang = langOverride || local.state.preferences.language;
   const [offset, setOffset] = useState(0);
   const manga = useResource<Manga>(`/api/manga/${id}?language=${lang}`);
@@ -78,13 +78,6 @@ export function MangaDetail({ id }: { id: string }) {
             <ArrowUpRight size={14} />
           </a>
         </div>
-      </section>
-      <section className="synopsis">
-        <h2>The story</h2>
-        <p>
-          {m.description.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/[*_#]/g, '') ||
-            'No description is available in this language.'}
-        </p>
       </section>
       <section>
         <div className="section-heading">
@@ -162,6 +155,13 @@ export function MangaDetail({ id }: { id: string }) {
             </Button>
           </div>
         )}
+      </section>
+      <section className="synopsis">
+        <h2>The story</h2>
+        <p>
+          {m.description.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/[*_#]/g, '') ||
+            'No description is available in this language.'}
+        </p>
       </section>
     </>
   );

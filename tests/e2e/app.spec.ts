@@ -167,12 +167,15 @@ test('clearing history requires confirmation and keeps bookmarks', async ({ page
   await page.goto(`/manga/${mangaId}`);
   await page.getByRole('button', { name: 'Save to library' }).click();
   await page.goto('/settings');
-  await page.getByRole('button', { name: 'Clear', exact: true }).click();
+  await page.getByRole('button', { name: 'Clear history', exact: true }).click();
   await expect(page.getByRole('group', { name: 'Clear reading history' })).toBeVisible();
   await page.getByRole('button', { name: 'Keep history' }).click();
   await expect(page.getByRole('group', { name: 'Clear reading history' })).toBeHidden();
-  await page.getByRole('button', { name: 'Clear', exact: true }).click();
   await page.getByRole('button', { name: 'Clear history', exact: true }).click();
+  await page
+    .getByRole('group', { name: 'Clear reading history' })
+    .getByRole('button', { name: 'Clear history', exact: true })
+    .click();
   expect((await readProfile(page)).bookmarks).toHaveLength(1);
 });
 test('image route rejects arbitrary URLs before contacting upstream', async ({ request }) => {

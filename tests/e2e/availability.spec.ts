@@ -57,3 +57,32 @@ test('detail language selector supports languages available in reading preferenc
   await page.getByLabel('Chapter language').selectOption('ko');
   await expect(page.getByLabel('Chapter language')).toHaveValue('ko');
 });
+
+test('a reader can verify an English title, open a chapter, and resume from Home', async ({
+  page,
+}) => {
+  await fixtures(page);
+  await page.goto('/discover');
+  const confirmed = page.waitForRequest((request) => {
+    const url = new URL(request.url());
+    return url.pathname === '/api/manga' && url.searchParams.get('hosted') === '1';
+  });
+  await page.getByRole('button', { name: 'Readable chapters only' }).click();
+  await confirmed;
+  await expect(page.getByText('1 confirmed in this selection')).toBeVisible();
+  await page.getByRole('link', { name: /Fixture Adventure/ }).click();
+  await expect(page.getByLabel('Chapter language')).toHaveValue('en');
+  await page.getByRole('link', { name: 'Start reading' }).click();
+  await expect(page.getByRole('heading', { name: 'Chapter 1', exact: true })).toBeVisible();
+  await expect(page.getByAltText('Page 1')).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(() => Object.keys(localStorage).some((key) => key.includes(':progress:'))),
+    )
+    .toBe(true);
+  await page.goto('/');
+  const resume = page.locator('.continue-card').first();
+  await expect(resume).toContainText('Chapter 1');
+  await resume.click();
+  await expect(page.getByRole('heading', { name: 'Chapter 1', exact: true })).toBeVisible();
+});

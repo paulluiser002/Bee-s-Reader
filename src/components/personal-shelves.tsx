@@ -5,29 +5,27 @@ import { ArrowRight, BookOpen, Bookmark, History } from 'lucide-react';
 import { useLocal } from './local-provider';
 import { useResource } from '@/lib/client';
 import { latestPerManga } from '@/lib/progress';
-import { Cover, Empty, Failure, MangaGrid, type MangaResults } from './catalog';
+import { Cover, Empty, Failure, MangaCard, MangaGrid, type MangaResults } from './catalog';
 import { BookmarkButton } from './bookmark-button';
-export function PersonalShelves() {
+export function PersonalShelves({ shelf }: { shelf: 'resume' | 'saved' }) {
   const local = useLocal();
   const resumes = latestPerManga(local.state.history)
     .filter((p) => !p.completed)
     .slice(0, 3);
-  const ids = [
-    ...new Set([
-      ...resumes.map((p) => p.mangaId),
-      ...local.state.bookmarks.slice(0, 6).map((b) => b.mangaId),
-    ]),
-  ];
+  const ids =
+    shelf === 'resume'
+      ? resumes.map((p) => p.mangaId)
+      : local.state.bookmarks.slice(0, 6).map((b) => b.mangaId);
   const titles = useResource<MangaResults>(
     ids.length ? `/api/manga?ids=${ids.join(',')}&limit=100` : null,
   );
   if (!local.ready || !ids.length) return null;
   return (
     <>
-      {resumes.length > 0 && (
+      {shelf === 'resume' && resumes.length > 0 && (
         <>
           <div className="section-heading">
-            <h2>Right where you left off</h2>
+            <h2>Continue reading</h2>
             <Link href="/history">
               Your history
               <ArrowRight size={16} />
@@ -36,24 +34,23 @@ export function PersonalShelves() {
           <div className="continue-grid">
             {resumes.map((p) => {
               const m = titles.data?.data.find((m) => m.id === p.mangaId);
-              return m ? (
+              return (
                 <Link key={p.chapterId} href={`/read/${p.chapterId}`} className="continue-card">
-                  <Cover manga={m} />
+                  {m ? <Cover manga={m} /> : <BookOpen size={32} />}
                   <div>
-                    <span className="small muted">Continue reading</span>
-                    <h3>{m.title}</h3>
+                    <h3>{m?.title || 'Saved title'}</h3>
                     <p>
-                      Page {p.pageIndex + 1}
+                      {p.chapterNumber && `Chapter ${p.chapterNumber} · `}Page {p.pageIndex + 1}
                       <ArrowRight size={15} />
                     </p>
                   </div>
                 </Link>
-              ) : null;
+              );
             })}
           </div>
         </>
       )}
-      {local.state.bookmarks.length > 0 && (
+      {shelf === 'saved' && local.state.bookmarks.length > 0 && (
         <>
           <div className="section-heading">
             <h2>A shelf of your own</h2>
@@ -137,34 +134,53 @@ export function LibraryPage() {
               <option value="read">Recently read</option>
             </select>
           </div>
-          <MangaGrid
-            data={filtered.filter((m): m is NonNullable<typeof m> => !!m)}
-            loading={result.loading}
-            error={result.error}
-            reload={result.reload}
-          />
+          {filtered.length > 0 && !result.loading && !result.error ? (
+            <div className="manga-grid">
+              {filtered.map((manga) => {
+                if (!manga) return null;
+                const progress = resumes.find((entry) => entry.mangaId === manga.id);
+                return (
+                  <div key={manga.id}>
+                    <MangaCard manga={manga} />
+                    {progress && !progress.completed && (
+                      <Link className="library-resume" href={`/read/${progress.chapterId}`}>
+                        Continue
+                        {progress.chapterNumber
+                          ? ` · Ch. ${progress.chapterNumber}`
+                          : ` · Page ${progress.pageIndex + 1}`}
+                      </Link>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <MangaGrid loading={result.loading} error={result.error} reload={result.reload} />
+          )}
           {result.data && slice.length > result.data.data.length && (
             <p className="notice">
               Some saved titles are no longer available on MangaDex. Your bookmarks are retained.
             </p>
           )}
-          <div className="pagination">
-            <button
-              className="button button-outline"
-              disabled={page === 0}
-              onClick={() => setPage((n) => n - 1)}
-            >
-              Previous
-            </button>
-            <span>{page + 1}</span>
-            <button
-              className="button button-outline"
-              disabled={(page + 1) * 48 >= saved.length}
-              onClick={() => setPage((n) => n + 1)}
-            >
-              Next
-            </button>
-          </div>
+          {(page > 0 || saved.length > 48) && (
+            <div className="pagination">
+              <button
+                className="button button-outline"
+                disabled={page === 0}
+                onClick={() => setPage((n) => n - 1)}
+              >
+                Previous
+              </button>
+              <span>{page + 1}</span>
+              <button
+                className="button button-outline"
+                disabled={(page + 1) * 48 >= saved.length}
+                onClick={() => setPage((n) => n + 1)}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </>
       )}
     </>
@@ -208,7 +224,7 @@ export function HistoryPage() {
                   <div>
                     <h3>{m?.title || 'Saved title'}</h3>
                     <p>
-                      Page {p.pageIndex + 1}
+                      {p.chapterNumber && `Chapter ${p.chapterNumber} · `}Page {p.pageIndex + 1}
                       {p.completed ? ' · Finished' : ''}
                     </p>
                     <time dateTime={p.updatedAt}>
@@ -224,23 +240,25 @@ export function HistoryPage() {
               </div>
             );
           })}
-          <div className="pagination">
-            <button
-              className="button button-outline"
-              disabled={!page}
-              onClick={() => setPage((n) => n - 1)}
-            >
-              Previous
-            </button>
-            <span>{page + 1}</span>
-            <button
-              className="button button-outline"
-              disabled={(page + 1) * 30 >= local.state.history.length}
-              onClick={() => setPage((n) => n + 1)}
-            >
-              Next
-            </button>
-          </div>
+          {(page > 0 || local.state.history.length > 30) && (
+            <div className="pagination">
+              <button
+                className="button button-outline"
+                disabled={!page}
+                onClick={() => setPage((n) => n - 1)}
+              >
+                Previous
+              </button>
+              <span>{page + 1}</span>
+              <button
+                className="button button-outline"
+                disabled={(page + 1) * 30 >= local.state.history.length}
+                onClick={() => setPage((n) => n + 1)}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       )}
     </>

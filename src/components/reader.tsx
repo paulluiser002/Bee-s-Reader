@@ -63,6 +63,7 @@ function ChapterReader({ data }: { data: ReaderData }) {
     stream,
     end,
     chapterId: chapter.id,
+    chapterNumber: chapter.number?.slice(0, 100),
     mangaId: manga.id,
     pageCount,
     loaded,
@@ -402,13 +403,14 @@ function ChapterReader({ data }: { data: ReaderData }) {
         >
           {sequence.map((c) => (
             <option value={c.id} key={c.id}>
-              {c.volume ? `Vol. ${c.volume} · ` : ''}Ch. {c.number || 'extra'}
+              Chapter {c.number || 'extra'}
+              {c.volume ? ` · Vol. ${c.volume}` : ''}
               {c.title ? ` — ${c.title}` : ''}
             </option>
           ))}
         </select>
         <span className="reader-page-count">
-          {page + 1}/{pageCount}
+          Page {page + 1} of {pageCount}
         </span>
         <Button
           variant="ghost"
@@ -430,6 +432,7 @@ function ChapterReader({ data }: { data: ReaderData }) {
           }}
         >
           <Eye size={18} />
+          <span>Controls</span>
         </button>
       )}
     </div>

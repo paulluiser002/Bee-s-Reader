@@ -1,8 +1,15 @@
 import { notFound } from 'next/navigation';
-import { uuid } from '@/lib/schemas';
+import { language, uuid } from '@/lib/schemas';
 import { MangaDetail } from '@/components/manga-detail';
-export default async function MangaPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function MangaPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ language?: string | string[] }>;
+}) {
   const { id } = await params;
   if (!uuid.safeParse(id).success) notFound();
-  return <MangaDetail id={id} />;
+  const selected = language.safeParse((await searchParams).language);
+  return <MangaDetail id={id} initialLanguage={selected.data} />;
 }

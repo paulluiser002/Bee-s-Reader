@@ -163,15 +163,15 @@ export function Settings() {
         <InstallApp />
         <ProfileTools />
         <section className="settings-section">
-          <h2>Your data</h2>
+          <h2>History management</h2>
           <div className="setting-row">
             <div>
               <h3>Reading history</h3>
               <p>Stored only in this browser profile.</p>
             </div>
-            <Button variant="outline" onClick={() => setConfirm(true)}>
+            <Button variant="outline" onClick={() => setConfirm(true)} disabled={confirm}>
               <Trash2 size={16} />
-              Clear
+              Clear history
             </Button>
           </div>
           {confirm && (

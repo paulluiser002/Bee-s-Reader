@@ -42,7 +42,7 @@ test('production PWA exposes valid manifest, icons, safe cache and offline fallb
   );
   await context.setOffline(true);
   await page.goto('/library');
-  await expect(page.getByRole('heading', { name: 'Your nook is still here.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'You’re offline.' })).toBeVisible();
   await expect
     .poll(() => page.locator('img').evaluate((image: HTMLImageElement) => image.naturalWidth))
     .toBe(192);

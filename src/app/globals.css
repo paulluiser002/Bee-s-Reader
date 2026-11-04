@@ -1499,3 +1499,41 @@ html:fullscreen {
 html:fullscreen .reader {
   min-height: 100dvh;
 }
+
+.discover-options {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+.discover-language select {
+  max-width: 132px;
+}
+.library-resume {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 800;
+}
+.continue-grid {
+  margin-bottom: 20px;
+}
+.show-controls:has(span) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  padding-inline: 12px;
+  font-size: 13px;
+}
+@media (max-width: 599px) {
+  .welcome-panel {
+    gap: 10px;
+  }
+  .welcome-symbol {
+    width: 96px;
+  }
+}

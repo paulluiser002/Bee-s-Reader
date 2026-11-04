@@ -26,7 +26,7 @@ export function ProfileTools() {
   }
   return (
     <section className="settings-section">
-      <h2>Your browser profile</h2>
+      <h2>Library data</h2>
       <p className="muted small">
         No account or database is needed. Your library, history, and preferences stay in this
         browser on this site. Other browsers and devices have separate profiles. Clearing site data

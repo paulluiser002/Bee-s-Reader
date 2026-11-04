@@ -82,10 +82,13 @@ export const languages = [
   ['it', 'Italian'],
   ['uk', 'Ukrainian'],
 ] as const;
-export function MangaCard({ manga }: { manga: Manga }) {
+export function MangaCard({ manga, language }: { manga: Manga; language?: string }) {
   return (
     <article>
-      <Link href={`/manga/${manga.id}`} className="manga-card">
+      <Link
+        href={`/manga/${manga.id}${language ? `?language=${language}` : ''}`}
+        className="manga-card"
+      >
         <Cover manga={manga} />
         <h3>{manga.title}</h3>
         <p>
@@ -102,11 +105,13 @@ export function MangaGrid({
   loading,
   error,
   reload,
+  language,
 }: {
   data?: Manga[];
   loading?: boolean;
   error?: string;
   reload: () => void;
+  language?: string;
 }) {
   if (error) return <Failure message={error} retry={reload} />;
   if (loading)
@@ -131,7 +136,7 @@ export function MangaGrid({
   return (
     <div className="manga-grid">
       {data.map((m) => (
-        <MangaCard key={m.id} manga={m} />
+        <MangaCard key={m.id} manga={m} language={language} />
       ))}
     </div>
   );
@@ -149,6 +154,7 @@ export function HomeCatalog() {
   const recent = useResource<MangaResults>(`/api/manga?sort=recent&limit=12&language=en&hosted=1`);
   return (
     <>
+      <PersonalShelves shelf="resume" />
       <section className="welcome-panel" aria-labelledby="home-heading">
         <div className="welcome-copy">
           <p className="welcome-kicker">Your little reading nook</p>
@@ -178,23 +184,29 @@ export function HomeCatalog() {
           </Link>
         ))}
       </div>
-      <PersonalShelves />
+      <PersonalShelves shelf="saved" />
       <div className="section-heading">
-        <h2>Reader favorites</h2>
+        <div>
+          <h2>Reader favorites</h2>
+          <p className="small muted">English chapters available</p>
+        </div>
         <Link href="/discover?sort=popular">
           Browse all
           <ArrowRight size={16} />
         </Link>
       </div>
-      <MangaGrid {...popular} data={popular.data?.data} />
+      <MangaGrid {...popular} data={popular.data?.data} language="en" />
       <div className="section-heading">
-        <h2>Fresh off the press</h2>
+        <div>
+          <h2>Fresh off the press</h2>
+          <p className="small muted">English chapters available</p>
+        </div>
         <Link href="/discover?sort=recent">
           See updates
           <ArrowRight size={16} />
         </Link>
       </div>
-      <MangaGrid {...recent} data={recent.data?.data} />
+      <MangaGrid {...recent} data={recent.data?.data} language="en" />
       <p className="catalog-credit">
         Catalog & chapters from{' '}
         <a href="https://mangadex.org" target="_blank" rel="noreferrer">
@@ -221,6 +233,7 @@ export function DiscoverCatalog({
   const [sort, setSort] = useState(initialSort);
   const [tag, setTag] = useState(initialTag);
   const [offset, setOffset] = useState(0);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   useEffect(() => {
     const timer = setTimeout(() => setDebounced(title), 350);
@@ -233,7 +246,8 @@ export function DiscoverCatalog({
     language,
     sort,
     offset: String(offset),
-    limit: '18',
+    limit: verifiedOnly ? '12' : '18',
+    ...(verifiedOnly ? { hosted: '1' } : {}),
     ...(tag ? { tag } : {}),
   });
   const result = useResource<MangaResults>(`/api/manga?${query}`);
@@ -271,6 +285,32 @@ export function DiscoverCatalog({
           <span>Filters</span>
         </Button>
       </form>
+      <div className="discover-options">
+        <label className="discover-language">
+          <select
+            aria-label="Reading language"
+            value={language}
+            onChange={(e) => update(setLanguage, e.target.value)}
+          >
+            {languages.map(([v, n]) => (
+              <option key={v} value={v}>
+                {n}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button
+          type="button"
+          className={`chip ${verifiedOnly ? 'active' : ''}`}
+          aria-pressed={verifiedOnly}
+          onClick={() => {
+            setVerifiedOnly((value) => !value);
+            setOffset(0);
+          }}
+        >
+          Readable chapters only
+        </button>
+      </div>
       <div className="chips">
         {[
           ['all', 'All stories'],
@@ -290,20 +330,6 @@ export function DiscoverCatalog({
       </div>
       {showFilters && (
         <div className="filter-panel">
-          <label>
-            Language
-            <select
-              aria-label="Reading language"
-              value={language}
-              onChange={(e) => update(setLanguage, e.target.value)}
-            >
-              {languages.map(([v, n]) => (
-                <option key={v} value={v}>
-                  {n}
-                </option>
-              ))}
-            </select>
-          </label>
           <label>
             Status
             <select value={status} onChange={(e) => update(setStatus, e.target.value)}>
@@ -326,12 +352,36 @@ export function DiscoverCatalog({
           </label>
         </div>
       )}
+      {(status !== 'all' || tag) && (
+        <div className="chips" aria-label="Applied filters">
+          {status !== 'all' && (
+            <button
+              className="chip"
+              onClick={() => update(setStatus, 'all')}
+              aria-label={`Remove ${status} filter`}
+            >
+              {status} ×
+            </button>
+          )}
+          {tag && (
+            <button
+              className="chip"
+              onClick={() => update(setTag, '')}
+              aria-label="Remove genre filter"
+            >
+              {genres.find(([, id]) => id === tag)?.[0] || 'Genre'} ×
+            </button>
+          )}
+        </div>
+      )}
       <div className="results-heading">
         <span className="muted small" aria-live="polite">
           {result.loading
             ? 'Looking for stories…'
             : result.data
-              ? `${result.data.total.toLocaleString()} stories on MangaDex`
+              ? verifiedOnly
+                ? `${result.data.data.length} confirmed in this selection`
+                : `${result.data.total.toLocaleString()} stories on MangaDex`
               : 'MangaDex catalog'}
         </span>
         <label className="sort-label">
@@ -352,8 +402,26 @@ export function DiscoverCatalog({
         loading={result.loading}
         error={result.error}
         reload={result.reload}
+        language={language}
       />
-      {result.data && result.data.total > 18 && (
+      {result.data?.data.length === 0 && !result.loading && !result.error && (
+        <Button
+          variant="outline"
+          onClick={() => {
+            setTitle('');
+            setDebounced('');
+            setOrigin('all');
+            setStatus('all');
+            setTag('');
+            setLanguage('en');
+            setVerifiedOnly(false);
+            setOffset(0);
+          }}
+        >
+          Clear filters
+        </Button>
+      )}
+      {!verifiedOnly && result.data && result.data.total > 18 && (
         <div className="pagination">
           <Button
             variant="outline"
@@ -381,8 +449,9 @@ export function DiscoverCatalog({
         </div>
       )}
       <p className="catalog-credit">
-        Check a title for hosted chapters in your selected language. MangaDex catalog listings alone
-        do not guarantee readable chapters.
+        {verifiedOnly
+          ? 'This view checks a selection of MangaDex results for readable chapters. Turn off the filter to browse all catalog matches.'
+          : 'Open a title to see readable chapters in your selected language.'}
       </p>
     </>
   );
