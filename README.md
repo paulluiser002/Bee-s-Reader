@@ -25,7 +25,7 @@ npm start
 
 1. Import [Bee-s-Reader](https://github.com/paulluiser002/Bee-s-Reader) into Vercel and use the **Next.js** preset with the repository root as the project root.
 2. Use **Node.js 22.x**, install command `npm ci`, build command `npm run build`, and the default Next.js output setting. No database or auth integration is needed.
-3. Leave environment variables unset unless using the optional settings below. Keep AniList disabled unless its terms permit your use.
+3. Leave environment variables unset unless using the optional settings below.
 4. Deploy over HTTPS. `vercel.json` selects the Singapore (`sin1`) function region. Vercel handles the server; the local `npm start` hostname does not restrict deployment.
 5. After deployment, check Discover search, a permitted title/chapter, data-saver images and retry, fullscreen, profile persistence after closing/reopening, Settings export/import, and PWA installation. Test once from the deployed origin: successful local tests cannot prove provider access from Vercel's network.
 
@@ -44,7 +44,6 @@ The service worker is enabled in production only. It caches a static offline hel
 | Variable                   | Default | Purpose                                                                                                             |
 | -------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------- |
 | `MANGADEX_BLOCKED_GROUPS`  | empty   | Comma-separated MangaDex scanlation-group UUIDs whose removal requests must be honored. Restart after changing.     |
-| `ANILIST_METADATA_ENABLED` | `false` | Enable only after establishing permitted use or obtaining AniList permission under its API terms. Server-side only. |
 
 Do not put private keys in `NEXT_PUBLIC_*` variables. None of these integrations requires a private key. `.env`, old SQLite files, and named profile backups are ignored by Git.
 
@@ -56,7 +55,6 @@ Do not put private keys in `NEXT_PUBLIC_*` variables. None of these integrations
 - Continuous vertical reading, data-saver by default, Original quality switch, page width controls, per-image retry, chapter selector, previous/next, and keyboard navigation.
 - Local bookmarks, per-chapter history, latest-per-title resume, persisted preferences, and confirmed history clearing.
 - Light, Dark, and System modes with a pre-paint theme script, semantic honey/ivory/charcoal tokens, reduced motion, safe areas, bottom navigation, and 320px layouts.
-- Optional supplementary metadata, matched **only by provider IDs linked by MangaDex**, with independent source attribution/errors. No speculative title matching or fabricated availability.
 
 ### Checking chapter availability
 
@@ -76,9 +74,9 @@ Auto-next requires loaded pages (or previously read pages before the resume poin
 
 **MangaDex is the primary source.** All catalog, chapter, cover and page requests go through server-side API routes. Public APIs supply metadata; MangaDex@Home supplies authorized page assignments. Browser requests never contain arbitrary upstream URLs. The app does not add advertisements, sell access, store chapter image binaries, mirror entire catalogs, or bypass external/removed/unpublished chapters.
 
-**Jikan** is the unofficial read-only MyAnimeList metadata API. Its title, score, genre and publication details are optional; failure never prevents reading. Jikan is not affiliated with MyAnimeList.
 
-**AniList’s adapter is implemented but disabled in the app by default.** Its [terms prohibit competing, non-complementary list/tracker services](https://docs.anilist.co/guide/terms-of-use). Because Bee’s Reader contains local bookmarks/history, operator permission must be established before enabling this integration. A single live public metadata contract probe was tested; no AniList account/list synchronization or bulk ingestion is implemented.
+
+AniList and Jikan adapters are retained for standalone integration probes. Bee’s Reader does not call them.
 
 MangaDex and scanlation-group source links are visible on title/reader screens. Honor a group leader’s written removal request by adding its UUID to `MANGADEX_BLOCKED_GROUPS` and restarting. The filter applies to feed, chapter metadata, and image authorization. Users should address copyright/removal concerns through the site operator and MangaDex’s source channels.
 

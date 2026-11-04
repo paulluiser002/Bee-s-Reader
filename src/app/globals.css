@@ -890,28 +890,6 @@ input[type='search'] {
   color: var(--muted-foreground);
   font-size: 11px;
 }
-.supplement {
-  margin-top: 36px;
-}
-.metadata-grid {
-  display: grid;
-  gap: 20px;
-}
-.metadata-source {
-  padding: 20px;
-  background: var(--card);
-  border-radius: 14px;
-}
-.metadata-source h3 {
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-.metadata-source p {
-  margin: 8px 0;
-}
-.metadata-source .source-link {
-  color: var(--primary);
-}
 @media (min-width: 650px) {
   .detail-hero {
     grid-template-columns: 200px minmax(0, 1fr);
@@ -926,9 +904,6 @@ input[type='search'] {
   }
   .tag {
     font-size: 12px;
-  }
-  .metadata-grid {
-    grid-template-columns: 1fr 1fr;
   }
 }
 .reader {

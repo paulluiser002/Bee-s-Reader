@@ -62,25 +62,6 @@ export async function fixtures(
         body: '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="384"><rect width="256" height="384" fill="#dbbd6c"/><text x="22" y="150" fill="#30291e" font-size="22">Test fixture</text></svg>',
       });
     if (path.endsWith('/chapters')) return json({ data: [chapter, nextChapter], total: 2 });
-    if (path.endsWith('/metadata'))
-      return json({
-        sources: [
-          {
-            provider: 'Jikan',
-            data: {
-              title: 'Fixture title',
-              score: '8/10',
-              genres: ['Adventure'],
-              status: 'Publishing',
-              chapters: null,
-              volumes: null,
-              url: 'https://myanimelist.net/manga/2',
-            },
-            error: null,
-          },
-          { provider: 'AniList', data: null, error: 'Disabled pending permission.' },
-        ],
-      });
     if (path.includes('/api/reader/') && path.includes('/images/')) {
       imageRequests.push(request.url());
       const index = Number(path.split('/').at(-1));

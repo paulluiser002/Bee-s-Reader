@@ -27,27 +27,6 @@ export default function About() {
         operator can block group IDs with MANGADEX_BLOCKED_GROUPS. Bee’s Reader has no
         advertisements, paywalls, or paid content access.
       </p>
-      <h2>A little extra context</h2>
-      <p>
-        <a href="https://jikan.moe" target="_blank" rel="noreferrer">
-          Jikan
-        </a>
-        , an unofficial read-only API for{' '}
-        <a href="https://myanimelist.net" target="_blank" rel="noreferrer">
-          MyAnimeList
-        </a>
-        , can supply supplementary catalog metadata on request. Scores are attributed to their
-        source. Jikan is not affiliated with MyAnimeList.
-      </p>
-      <p>
-        The{' '}
-        <a href="https://anilist.co" target="_blank" rel="noreferrer">
-          AniList
-        </a>{' '}
-        adapter is disabled by default. AniList restricts competing manga list and tracker services;
-        operators must establish that their use is permitted, or obtain permission, before enabling
-        it. Supplementary providers never supply reading pages or determine chapter availability.
-      </p>
       <h2>Your data stays close</h2>
       <p>
         Bookmarks, per-chapter reading positions, and preferences stay in this browser profile on
@@ -61,9 +40,7 @@ export default function About() {
         Requests for the stories you open are sent through the server to MangaDex. Metadata is
         cached briefly in server memory and Vercel’s shared public metadata cache; chapter images
         are not persisted by the app. The MangaDex@Home network receives required image health
-        reports, including the image URL, success, size, cache status, and transfer time. Optional
-        metadata requests contact Jikan and, when enabled, AniList. Those services have their own
-        privacy policies.
+        reports, including the image URL, success, size, cache status, and transfer time.
       </p>
       <h2>A home on your screen</h2>
       <p>
@@ -81,14 +58,6 @@ export default function About() {
           rel="noreferrer"
         >
           MangaDex acceptable usage policy
-        </a>{' '}
-        ·{' '}
-        <a href="https://docs.anilist.co/guide/terms-of-use" target="_blank" rel="noreferrer">
-          AniList terms
-        </a>{' '}
-        ·{' '}
-        <a href="https://docs.api.jikan.moe" target="_blank" rel="noreferrer">
-          Jikan API documentation
         </a>
       </p>
     </article>

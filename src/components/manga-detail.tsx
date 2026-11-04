@@ -22,26 +22,10 @@ export function MangaDetail({ id }: { id: string }) {
   const [langOverride, setLang] = useState<string | null>(null);
   const lang = langOverride || local.state.preferences.language;
   const [offset, setOffset] = useState(0);
-  const [metadata, setMetadata] = useState(false);
   const manga = useResource<Manga>(`/api/manga/${id}?language=${lang}`);
   const feed = useResource<{ data: Chapter[]; total: number }>(
     `/api/manga/${id}/chapters?language=${lang}&offset=${offset}`,
   );
-  const extra = useResource<{
-    sources: {
-      provider: string;
-      data: {
-        title: string;
-        score: string | null;
-        genres: string[];
-        status: string | null;
-        chapters: number | null;
-        volumes: number | null;
-        url: string;
-      } | null;
-      error: string | null;
-    }[];
-  }>(metadata ? `/api/manga/${id}/metadata` : null);
   if (manga.error) return <Failure message={manga.error} retry={manga.reload} />;
   if (!manga.data)
     return (
@@ -176,48 +160,6 @@ export function MangaDetail({ id }: { id: string }) {
               Next
               <ChevronRight size={16} />
             </Button>
-          </div>
-        )}
-      </section>
-      <section className="supplement">
-        <div className="section-heading">
-          <h2>A little more context</h2>
-        </div>
-        <p className="muted small">
-          Optional catalog metadata, matched only through MangaDex’s linked provider IDs. Scores and
-          chapter counts may differ from readable availability.
-        </p>
-        {!metadata ? (
-          <Button variant="outline" onClick={() => setMetadata(true)}>
-            Load supplementary metadata
-          </Button>
-        ) : extra.loading ? (
-          <p role="status">Checking supplementary sources…</p>
-        ) : extra.error ? (
-          <Failure message={extra.error} retry={extra.reload} />
-        ) : (
-          <div className="metadata-grid">
-            {extra.data?.sources.map((s) => (
-              <div className="metadata-source" key={s.provider}>
-                <h3>{s.provider}</h3>
-                {s.data ? (
-                  <>
-                    <p>{s.data.title}</p>
-                    <p className="muted small">
-                      {s.data.score ? `Score ${s.data.score}` : 'No score'} ·{' '}
-                      {s.data.status || 'Status unavailable'}
-                    </p>
-                    <p className="muted small">{s.data.genres.join(', ')}</p>
-                    <a className="source-link" href={s.data.url} target="_blank" rel="noreferrer">
-                      Source details
-                      <ArrowUpRight size={14} />
-                    </a>
-                  </>
-                ) : (
-                  <p className="muted small">{s.error}</p>
-                )}
-              </div>
-            ))}
           </div>
         )}
       </section>
