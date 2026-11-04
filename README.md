@@ -51,7 +51,7 @@ Do not put private keys in `NEXT_PUBLIC_*` variables. None of these integrations
 ## What works
 
 - Home with real popular/recent MangaDex catalog data and personal continue-reading/saved shelves.
-- Debounced Discover search; language, publication status, origin, genre and sort filters; pagination and real loading/empty/error states. Use **Check English** (or the selected language) on a title to check MangaDex hosted chapter metadata before opening it.
+- Debounced Discover search; language, publication status, origin, genre and sort filters; pagination and real loading/empty/error states. Home and Discover default to English and use MangaDex’s available-chapter filter. Discover lets readers select another language.
 - Title details, covers, creators, tags, source links, credited chapter feeds, bookmarks, and resume links.
 - Continuous vertical reading, data-saver by default, Original quality switch, page width controls, per-image retry, chapter selector, previous/next, and keyboard navigation.
 - Local bookmarks, per-chapter history, latest-per-title resume, persisted preferences, and confirmed history clearing.

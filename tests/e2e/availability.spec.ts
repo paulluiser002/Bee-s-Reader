@@ -1,43 +1,31 @@
 import { expect, test } from '@playwright/test';
 import { chapter, fixtures, mangaId } from './fixtures';
 
-test('discover checks the selected language on demand and distinguishes unavailable from upstream errors', async ({
+test('Home and Discover browse in English by default without per-title check buttons', async ({
   page,
 }) => {
   await fixtures(page);
-  let checks = 0;
-  await page.route(/\/api\/manga\/[^/]+\/availability\?/, async (route) => {
-    checks++;
-    const language = new URL(route.request().url()).searchParams.get('language');
-    if (language === 'es')
-      return route.fulfill({ json: { status: 'readable', readableChapters: 1 } });
-    if (checks === 1)
-      return route.fulfill({ json: { status: 'unavailable', readableChapters: 0 } });
-    return route.fulfill({ status: 503, json: { error: 'Temporarily unavailable' } });
-  });
-  await page.goto('/discover');
-  await expect(page.getByRole('heading', { name: 'Fixture Adventure' })).toBeVisible();
-  expect(checks).toBe(0);
-  await page
-    .getByRole('button', { name: 'Check English availability for Fixture Adventure' })
-    .click();
-  await expect(
-    page.getByRole('status').filter({ hasText: 'No hosted English chapters found' }),
-  ).toBeVisible();
-  await page
-    .getByRole('button', { name: 'Check English availability for Fixture Adventure' })
-    .click();
-  await expect(
-    page.getByRole('status').filter({ hasText: 'Availability could not be confirmed' }),
-  ).toBeVisible();
+  await page.goto('/settings');
+  await page.getByLabel('Default reading language').selectOption('ja');
+
+  for (const path of ['/', '/discover']) {
+    const request = page.waitForRequest((request) => {
+      const url = new URL(request.url());
+      return url.pathname === '/api/manga' && url.searchParams.get('language') === 'en';
+    });
+    await page.goto(path);
+    await request;
+    await expect(page.getByRole('heading', { name: 'Fixture Adventure' }).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: /check .* availability/i })).toHaveCount(0);
+  }
+
   await page.getByRole('button', { name: 'Filters' }).click();
+  const spanishRequest = page.waitForRequest((request) => {
+    const url = new URL(request.url());
+    return url.pathname === '/api/manga' && url.searchParams.get('language') === 'es';
+  });
   await page.getByLabel('Reading language').selectOption('es');
-  await page
-    .getByRole('button', { name: 'Check Spanish availability for Fixture Adventure' })
-    .click();
-  await expect(
-    page.getByRole('status').filter({ hasText: 'Hosted Spanish chapters found' }),
-  ).toBeVisible();
+  await spanishRequest;
 });
 
 test('a filtered-out chapter page does not claim the entire language is unavailable', async ({

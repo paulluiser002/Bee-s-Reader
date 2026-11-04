@@ -29,6 +29,7 @@ describe('provider contracts', () => {
   it('validates inputs and maps origin filters to supported MangaDex metadata', () => {
     const q = searchSchema.parse({ origin: 'manhwa', title: '  Bee  ', offset: '24' });
     const p = searchParams(q);
+    expect(p.get('hasAvailableChapters')).toBe('true');
     expect(p.getAll('originalLanguage[]')).toEqual(['ko']);
     expect(p.get('title')).toBe('Bee');
     expect(p.get('offset')).toBe('24');

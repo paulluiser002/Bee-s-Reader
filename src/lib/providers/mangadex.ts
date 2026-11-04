@@ -145,7 +145,10 @@ export function searchParams(q: z.infer<typeof searchSchema>) {
   p.append('contentRating[]', 'safe');
   p.append('contentRating[]', 'suggestive');
   if (q.title) p.set('title', q.title);
-  if (!q.ids) p.append('availableTranslatedLanguage[]', q.language);
+  if (!q.ids) {
+    p.append('availableTranslatedLanguage[]', q.language);
+    p.set('hasAvailableChapters', 'true');
+  }
   if (q.ids) q.ids.forEach((id) => p.append('ids[]', id));
   const origins = { manga: ['ja'], manhwa: ['ko'], manhua: ['zh', 'zh-hk'], all: [] }[q.origin];
   origins.forEach((o) => p.append('originalLanguage[]', o));

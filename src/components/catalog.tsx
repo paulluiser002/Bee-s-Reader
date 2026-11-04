@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -12,10 +12,9 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import type { Manga } from '@/lib/providers/mangadex';
-import { clientJSON, useResource } from '@/lib/client';
+import { useResource } from '@/lib/client';
 import { Button } from './ui/button';
 import { PersonalShelves } from './personal-shelves';
-import { useLocal } from './local-provider';
 export type MangaResults = { data: Manga[]; total: number; limit: number; offset: number };
 export function Empty({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -83,70 +82,7 @@ export const languages = [
   ['it', 'Italian'],
   ['uk', 'Ukrainian'],
 ] as const;
-function LanguageAvailability({
-  id,
-  title,
-  language,
-}: {
-  id: string;
-  title: string;
-  language: string;
-}) {
-  const [state, setState] = useState<'idle' | 'checking' | 'readable' | 'unavailable' | 'unknown'>(
-    'idle',
-  );
-  const request = useRef<AbortController | null>(null);
-  const label = languages.find(([code]) => code === language)?.[1] || language;
-  useEffect(() => () => request.current?.abort(), []);
-  async function check() {
-    const controller = new AbortController();
-    request.current = controller;
-    setState('checking');
-    try {
-      const result = await clientJSON<{ status: string }>(
-        `/api/manga/${id}/availability?language=${encodeURIComponent(language)}`,
-        { signal: controller.signal },
-      );
-      if (!controller.signal.aborted)
-        setState(
-          result.status === 'readable' || result.status === 'unavailable'
-            ? result.status
-            : 'unknown',
-        );
-    } catch {
-      if (!controller.signal.aborted) setState('unknown');
-    }
-  }
-  return (
-    <div className="card-availability">
-      <button
-        type="button"
-        className="availability-button"
-        aria-label={`Check ${label} availability for ${title}`}
-        disabled={state === 'checking'}
-        onClick={() => void check()}
-      >
-        {state === 'checking' ? 'Checking…' : `Check ${label}`}
-      </button>
-      {state !== 'idle' && state !== 'checking' && (
-        <p role="status" className="availability-status">
-          {state === 'readable'
-            ? `Hosted ${label} chapters found`
-            : state === 'unavailable'
-              ? `No hosted ${label} chapters found`
-              : 'Availability could not be confirmed. Try again.'}
-        </p>
-      )}
-    </div>
-  );
-}
-export function MangaCard({
-  manga,
-  availabilityLanguage,
-}: {
-  manga: Manga;
-  availabilityLanguage?: string;
-}) {
+export function MangaCard({ manga }: { manga: Manga }) {
   return (
     <article>
       <Link href={`/manga/${manga.id}`} className="manga-card">
@@ -158,9 +94,6 @@ export function MangaCard({
           {manga.tags[0] && <span className="card-tag">{manga.tags[0].name}</span>}
         </p>
       </Link>
-      {availabilityLanguage && (
-        <LanguageAvailability id={manga.id} title={manga.title} language={availabilityLanguage} />
-      )}
     </article>
   );
 }
@@ -169,13 +102,11 @@ export function MangaGrid({
   loading,
   error,
   reload,
-  availabilityLanguage,
 }: {
   data?: Manga[];
   loading?: boolean;
   error?: string;
   reload: () => void;
-  availabilityLanguage?: string;
 }) {
   if (error) return <Failure message={error} retry={reload} />;
   if (loading)
@@ -200,11 +131,7 @@ export function MangaGrid({
   return (
     <div className="manga-grid">
       {data.map((m) => (
-        <MangaCard
-          key={`${m.id}:${availabilityLanguage || ''}`}
-          manga={m}
-          availabilityLanguage={availabilityLanguage}
-        />
+        <MangaCard key={m.id} manga={m} />
       ))}
     </div>
   );
@@ -218,12 +145,11 @@ const genres = [
   ['Action', '391b0423-d847-456f-aff0-8b0cfc03066b'],
 ];
 export function HomeCatalog() {
-  const { state } = useLocal();
   const popular = useResource<MangaResults>(
-    `/api/manga?sort=popular&limit=6&language=${state.preferences.language}`,
+    `/api/manga?sort=popular&limit=6&language=en`,
   );
   const recent = useResource<MangaResults>(
-    `/api/manga?sort=recent&limit=12&language=${state.preferences.language}`,
+    `/api/manga?sort=recent&limit=12&language=en`,
   );
   return (
     <>
@@ -303,13 +229,11 @@ export function DiscoverCatalog({
   initialTag?: string;
   initialSort?: string;
 }) {
-  const { state } = useLocal();
   const [title, setTitle] = useState('');
   const [debounced, setDebounced] = useState('');
   const [origin, setOrigin] = useState('all');
   const [status, setStatus] = useState('all');
-  const [languageOverride, setLanguage] = useState<string | null>(null);
-  const language = languageOverride || state.preferences.language;
+  const [language, setLanguage] = useState('en');
   const [sort, setSort] = useState(initialSort);
   const [tag, setTag] = useState(initialTag);
   const [offset, setOffset] = useState(0);
@@ -444,7 +368,6 @@ export function DiscoverCatalog({
         loading={result.loading}
         error={result.error}
         reload={result.reload}
-        availabilityLanguage={language}
       />
       {result.data && result.data.total > 18 && (
         <div className="pagination">
